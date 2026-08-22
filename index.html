@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Siswa Portal & Task Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cinzel', serif; background: #0a0a0a; color: #fff; padding: 15px; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+
+        /* TOAST NOTIFIKASI DI ATAS LAYAR WEB */
+        .toast-notification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(220, 20, 60, 0.95); color: #fff; padding: 12px 22px;
+            border-radius: 8px; border: 1px solid #ff0055; box-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+            z-index: 9999; font-family: 'Noto Sans JP', sans-serif; font-size: 0.9rem; font-weight: bold;
+            transition: top 0.4s ease-in-out; display: flex; align-items: center; gap: 10px; pointer-events: none;
+        }
+        .toast-notification.show { top: 20px; }
+
+        /* NOTIFIKASI IG STYLE (BAWAH TENGAH) */
+        .ig-toast {
+            position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.95); color: #fff; padding: 10px 20px;
+            border-radius: 25px; border: 1px solid #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+            z-index: 10000; font-family: 'Noto Sans JP', sans-serif; font-size: 0.85rem; font-weight: bold;
+            transition: bottom 0.4s ease-in-out; pointer-events: none; text-align: center; white-space: nowrap;
+        }
+        .ig-toast.show { bottom: 30px; }
+
+        /* BADGE MERAH NOTIFIKASI */
+        .nav-badge-container { position: relative; display: inline-block; width: 100%; }
+        .badge-red {
+            position: absolute; top: -6px; right: -6px; background: #ff0055; color: white;
+            font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; font-weight: bold;
+            box-shadow: 0 0 10px #ff0055; display: none; z-index: 10;
+        }
+
+        #bg-video {
+            position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; width: auto; height: auto;
+            z-index: -2; object-fit: cover; filter: brightness(0.4) contrast(1.1);
+        }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.65); z-index: -1; }
+
+        .student-nav-container { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .top-left-nav, .top-right-nav { display: flex; gap: 8px; align-items: center; width: 100%; }
+
+        /* TOMBOL KILAUAN CAHAYA GLASS SHINE */
+        .cyber-btn-nav, .cyber-btn-large {
+            position: relative;
+            background: linear-gradient(135deg, rgba(180, 0, 0, 0.9), rgba(220, 20, 60, 0.9));
+            color: #fff; border: 1px solid #ff0055; padding: 10px 16px; font-family: 'Cinzel', serif;
+            font-size: 0.8rem; font-weight: 700; cursor: pointer; overflow: hidden;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+            box-shadow: 0 0 12px rgba(220, 20, 60, 0.6); transition: all 0.3s;
+            white-space: nowrap; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .cyber-btn-nav::after, .cyber-btn-large::after {
+            content: ''; position: absolute; top: -50%; left: -60%; width: 50%; height: 200%;
+            background: linear-gradient(60deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 80%);
+            transform: rotate(25deg); animation: glassShine 3.5s infinite;
+        }
+
+        @keyframes glassShine { 0% { left: -70%; } 30% { left: 150%; } 100% { left: 150%; } }
+
+        .header { text-align: center; margin-bottom: 20px; margin-top: 10px; }
+        h1 { font-size: 1.8rem; color: #dc143c; text-shadow: 0 0 12px rgba(220,20,60,0.9); letter-spacing: 1px; }
+
+        .card { background: rgba(15, 15, 15, 0.85); border: 2px solid #dc143c; padding: 22px; border-radius: 6px; max-width: 500px; margin: 0 auto 20px; width: 100%; backdrop-filter: blur(5px); box-shadow: 0 0 20px rgba(220,20,60,0.3); }
+        .form-group { margin-bottom: 15px; font-family: 'Noto Sans JP', sans-serif; }
+        label { display: block; font-size: 0.85rem; color: #dc143c; margin-bottom: 8px; font-weight: bold; }
+
+        .text-input-large, .file-input-large { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.8); border: 1px solid #dc143c; color: #fff; font-size: 0.95rem; border-radius: 4px; outline: none; }
+        .text-input-large:focus { border-color: #ff0055; box-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center;
+            padding: 15px; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: rgba(15, 15, 15, 0.95); border: 2px solid #ff0055; width: 100%; max-width: 480px;
+            max-height: 85vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 0 25px rgba(220, 20, 60, 0.5);
+        }
+
+        .modal-header { padding: 12px 18px; background: rgba(139, 0, 0, 0.9); border-bottom: 1px solid #dc143c; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 15px; overflow-y: auto; flex: 1; font-family: 'Noto Sans JP', sans-serif; display: flex; flex-direction: column; }
+
+        /* LAYOUT CHAT PERSIS WA */
+        .chat-box { display: flex; flex-direction: column; height: 400px; background: #080808; border: 1px solid #333; border-radius: 6px; overflow: hidden; position: relative; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; user-select: none; }
+        
+        .chat-bubble {
+            position: relative; max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem;
+            font-family: Arial, sans-serif !important; word-break: break-word; cursor: pointer; transition: transform 0.1s;
+        }
+        .chat-bubble.user { align-self: flex-end; background: #800020; color: #fff; border-bottom-right-radius: 2px; }
+        .chat-bubble.admin { align-self: flex-start; background: #222; color: #fff; border-bottom-left-radius: 2px; }
+        .chat-bubble.deleted { font-style: italic; opacity: 0.7; background: #1a1a1a !important; color: #888 !important; }
+
+        .delete-msg-btn { position: absolute; top: 4px; right: 6px; font-size: 0.7rem; color: #ff5555; background: none; border: none; cursor: pointer; display: none; }
+        .chat-bubble:hover .delete-msg-btn { display: block; }
+
+        /* STIKER PESAN */
+        .sticker-img { max-width: 120px; max-height: 120px; object-fit: contain; display: block; border-radius: 8px; }
+
+        /* REAKSI EMOJI WA STYLE */
+        .reaction-badge {
+            position: absolute; bottom: -8px; right: 8px; background: #151515; border: 1px solid #ff0055;
+            border-radius: 10px; padding: 1px 5px; font-size: 0.75rem; box-shadow: 0 0 5px rgba(0,0,0,0.8);
+        }
+        
+        /* POPUP FLOATING REACTION EMOJI */
+        .emoji-picker-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: #181818; border: 1px solid #ff0055; border-radius: 25px;
+            padding: 8px 16px; display: flex; gap: 10px; box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+            z-index: 99999; transition: transform 0.2s ease-out; max-width: 90vw; overflow-x: auto;
+        }
+        .emoji-picker-popup.active { transform: translate(-50%, -50%) scale(1); }
+        .emoji-picker-popup span { font-size: 1.3rem; cursor: pointer; transition: transform 0.1s; flex-shrink: 0; }
+        .emoji-picker-popup span:hover { transform: scale(1.3); }
+
+        /* INPUT AREA & STICKER POPUP */
+        .chat-input-area { 
+            display: flex; align-items: center; gap: 6px; padding: 8px 8px; background: #151515; 
+            border-top: 1px solid #222; position: relative; width: 100%; box-sizing: border-box; 
+        }
+        .chat-input { 
+            flex: 1 !important; height: 42px !important; background: #252525 !important; border: 1px solid #444 !important; 
+            color: #fff !important; padding: 0 12px !important; font-size: 14px !important; font-family: Arial, sans-serif !important; 
+            outline: none !important; border-radius: 20px !important; margin: 0 !important; min-width: 0 !important;
+        }
+
+        /* STICKER PICKER POPUP */
+        .sticker-picker-container {
+            position: absolute; bottom: 58px; left: 10px; background: #181818; border: 1px solid #ff0055;
+            border-radius: 12px; padding: 10px; display: none; gap: 10px; z-index: 99;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); max-width: 90%; overflow-x: auto;
+        }
+        .sticker-picker-container.active { display: flex; }
+        .sticker-item {
+            width: 55px; height: 55px; border-radius: 8px; border: 1px dashed #ff0055; background: #252525;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+            overflow: hidden; transition: transform 0.2s;
+        }
+        .sticker-item:hover { transform: scale(1.1); }
+        .sticker-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* BOX DESIBEL WA RECORDING */
+        .recording-box {
+            flex: 1; height: 42px; background: rgba(220, 20, 60, 0.15); border: 1px solid #ff0055;
+            border-radius: 20px; display: none; align-items: center; justify-content: space-between; padding: 0 12px;
+        }
+        .recording-timer { color: #ff0055; font-weight: bold; font-family: monospace; font-size: 0.85rem; display: flex; align-items: center; gap: 4px; }
+        .db-waves { display: flex; align-items: center; gap: 2px; height: 18px; }
+        .db-bar { width: 3px; height: 4px; background: #ff0055; border-radius: 2px; transition: height 0.05s ease; }
+
+        .btn-send-wa, .btn-mic-wa, .btn-sticker-wa {
+            position: relative; width: 38px !important; height: 38px !important; min-width: 38px !important;
+            border-radius: 50% !important; background: #dc143c !important; color: #fff !important; border: none !important;
+            display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important;
+            font-size: 1rem !important; box-shadow: 0 0 8px rgba(220, 20, 60, 0.7) !important; flex-shrink: 0 !important; padding: 0 !important;
+        }
+        .btn-sticker-wa { background: #333 !important; border: 1px solid #ff0055 !important; }
+        .btn-mic-wa.recording { background: #ff0000 !important; animation: pulseMic 1s infinite; }
+        @keyframes pulseMic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* CUSTOM AUDIO PLAYER TEMA DARK/RED */
+        .custom-audio-player {
+            display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4);
+            padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,0,85,0.4); margin-top: 4px; min-width: 180px;
+        }
+        .play-btn-custom { background: #ff0055; color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        .audio-progress-container { flex: 1; height: 5px; background: #333; border-radius: 3px; position: relative; cursor: pointer; }
+        .audio-progress-bar { width: 0%; height: 100%; background: #ff0055; border-radius: 3px; }
+        .audio-time { font-size: 0.7rem; font-family: monospace; color: #aaa; }
+
+        .cyber-footer { text-align: center; padding: 15px; margin-top: auto; background: rgba(5, 5, 5, 0.9); border-top: 1px solid rgba(220, 20, 60, 0.3); font-size: 0.8rem; color: #dc143c; }
+
+        @media (max-width: 768px) {
+            .student-nav-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+            .top-left-nav, .top-right-nav { display: contents; }
+            .cyber-btn-nav { width: 100%; font-size: 0.7rem; padding: 8px 5px; }
+            .header { margin-top: 10px; margin-bottom: 15px; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toastNotif" class="toast-notification"><i class="fa-solid fa-bell fa-bounce"></i> <span id="toastText">Pesan masuk!</span></div>
+    <div id="igToast" class="ig-toast">Notifikasi IG</div>
+
+    <video autoplay muted loop id="bg-video"><source src="jujutsu-bg.mp4" type="video/mp4"></video>
+    <div class="video-overlay"></div>
+
+    <div class="student-nav-container">
+        <div class="top-left-nav">
+            <div class="nav-badge-container">
+                <button class="cyber-btn-nav" style="width:100%;" onclick="openStudentChatModal()"><i class="fa-solid fa-comments"></i> CHAT ADMIN</button>
+                <span id="studentBadge" class="badge-red">!</span>
+            </div>
+        </div>
+        <div class="top-right-nav">
+            <button class="cyber-btn-nav" onclick="openModal('editProfileModal')"><i class="fa-solid fa-user-pen"></i> EDIT PROFIL</button>
+            <button class="cyber-btn-nav" onclick="openAuthModal()" style="background: linear-gradient(135deg, #005580, #0088cc);"><i class="fa-solid fa-right-to-bracket"></i> AKUN / LOGIN</button>
+        </div>
+    </div>
+
+    <div class="header"><h1>PORTAL UPLOAD TUGAS</h1></div>
+
+    <div class="card">
+        <div class="form-group">
+            <label><i class="fa-solid fa-pen-to-square"></i> TUGAS KE</label>
+            <input type="text" id="tugasKe" class="text-input-large" placeholder="Contoh: 1, 2, atau 3">
+        </div>
+        <div class="form-group">
+            <label><i class="fa-solid fa-file-arrow-up"></i> PILIH BERKAS TUGAS</label>
+            <input type="file" id="fileTugas" class="file-input-large">
+        </div>
+        <button class="cyber-btn-large" style="width:100%; margin-top:10px; padding:14px; font-size:1rem;" onclick="uploadTugas()"><i class="fa-solid fa-paper-plane"></i> KIRIM TUGAS</button>
+    </div>
+
+    <!-- EMOJI PICKER POPUP FLOATING -->
+    <div class="emoji-picker-popup" id="emojiPicker" onclick="event.stopPropagation()">
+        <span onclick="reactEmoji('😞')">😞</span><span onclick="reactEmoji('😳')">😳</span>
+        <span onclick="reactEmoji('😎')">😎</span><span onclick="reactEmoji('🥶')">🥶</span>
+        <span onclick="reactEmoji('🤣')">🤣</span><span onclick="reactEmoji('😭')">😭</span>
+        <span onclick="reactEmoji('🙏🏻')">🙏🏻</span><span onclick="reactEmoji('👌🏻')">👌🏻</span>
+        <span onclick="reactEmoji('💯')">💯</span><span onclick="reactEmoji('❤️')">❤️</span>
+    </div>
+
+    <!-- MODAL CHAT WITH VOICE NOTE & WA LAYOUT -->
+    <div class="modal-overlay" id="chatStudentModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div><i class="fa-solid fa-comments"></i> CHAT DENGAN ADMIN</div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <!-- FITUR TELEPON DARURAT KE ADMIN -->
+                    <button style="background:none; border:none; color:#00ffcc; font-size:1.1rem; cursor:pointer;" title="Panggil Admin Darurat" onclick="callAdminEmergency()"><i class="fa-solid fa-phone-flip fa-shake"></i></button>
+                    <button style="background:none; border:none; color:#dc143c; font-size:1.2rem; cursor:pointer;" onclick="closeModal('chatStudentModal')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="modal-body" style="padding:10px;">
+                <div class="chat-box">
+                    <div class="chat-messages" id="studentChatMessages"></div>
+                    <div class="chat-input-area">
+                        <!-- POPUP SELECTOR STIKER -->
+                        <div class="sticker-picker-container" id="stickerPickerStudent">
+                            <!-- 5 SLOT STIKER KOSONGAN (GANTI 'src' DENGAN NAMA FILE KAMU DI INTERNAL MEMORI) -->
+                            <div class="sticker-item" onclick="sendSticker('stiker1.png')"><img src="stiker1.png" alt="Stiker 1" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 1</text></svg>'"></div>
+                            <div class="sticker-item" onclick="sendSticker('stiker2.png')"><img src="stiker2.png" alt="Stiker 2" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 2</text></svg>'"></div>
+                            <div class="sticker-item" onclick="sendSticker('stiker3.png')"><img src="stiker3.png" alt="Stiker 3" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 3</text></svg>'"></div>
+                            <div class="sticker-item" onclick="sendSticker('stiker4.png')"><img src="stiker4.png" alt="Stiker 4" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 4</text></svg>'"></div>
+                            <div class="sticker-item" onclick="sendSticker('stiker5.png')"><img src="stiker5.png" alt="Stiker 5" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 5</text></svg>'"></div>
+                        </div>
+
+                        <!-- TOMBOL STIKER WA (KIRI) -->
+                        <button class="btn-sticker-wa" id="btnStickerStudent" onclick="toggleStickerPicker()"><i class="fa-regular fa-face-smile"></i></button>
+
+                        <button class="btn-mic-wa" id="btnMicStudent" onclick="toggleRecordAudio('student')"><i class="fa-solid fa-microphone"></i></button>
+                        
+                        <!-- INPUT NORMAL -->
+                        <input type="text" class="chat-input" id="studentChatInput" placeholder="Ketik pesan..." oninput="handleInputChange()" onkeydown="if(event.key==='Enter') sendStudentChatMessage()">
+                        
+                        <!-- DESIBEL WA RECORDING BOX -->
+                        <div class="recording-box" id="recordingBoxStudent">
+                            <div class="recording-timer"><i class="fa-solid fa-circle fa-beat-fade"></i> <span id="recTimerStudent">00:00</span></div>
+                            <div class="db-waves" id="dbWavesStudent">
+                                <div class="db-bar"></div><div class="db-bar"></div><div class="db-bar"></div><div class="db-bar"></div>
+                                <div class="db-bar"></div><div class="db-bar"></div><div class="db-bar"></div><div class="db-bar"></div>
+                            </div>
+                        </div>
+
+                        <button class="btn-send-wa" id="btnSendStudent" onclick="sendStudentChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AUTH -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div><i class="fa-solid fa-user-lock"></i> AKUN SISWA (LOGIN / REGISTRASI)</div>
+                <button style="background:none; border:none; color:#dc143c; font-size:1.2rem; cursor:pointer;" onclick="closeModal('authModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button class="cyber-btn-nav" style="flex:1;" onclick="switchAuthTab('login')">Login</button>
+                    <button class="cyber-btn-nav" style="flex:1;" onclick="switchAuthTab('register')">Daftar Baru</button>
+                </div>
+                <div id="formLogin">
+                    <div class="form-group"><label>No Absen</label><input type="number" id="loginAbsen" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <div class="form-group"><label>PIN</label><input type="password" id="loginPin" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <button class="cyber-btn-large" style="width:100%; margin-top:10px;" onclick="processLogin()">Masuk Akun</button>
+                </div>
+                <div id="formRegister" style="display:none;">
+                    <div class="form-group"><label>Nama Lengkap</label><input type="text" id="regNama" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <div class="form-group"><label>Kelas</label><input type="text" id="regKelas" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <div class="form-group"><label>Jurusan</label><input type="text" id="regJurusan" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <div class="form-group"><label>No Absen</label><input type="number" id="regAbsen" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <div class="form-group"><label>PIN Keamanan</label><input type="password" id="regPin" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                    <button class="cyber-btn-large" style="width:100%; margin-top:10px;" onclick="processRegister()">Buat Akun Baru</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT PROFIL -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div><i class="fa-solid fa-user-pen"></i> PERMINTAAN EDIT PROFIL</div>
+                <button style="background:none; border:none; color:#dc143c; font-size:1.2rem; cursor:pointer;" onclick="closeModal('editProfileModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Nama Baru</label><input type="text" id="editNama" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                <div class="form-group"><label>Kelas Baru</label><input type="text" id="editKelas" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                <div class="form-group"><label>Jurusan Baru</label><input type="text" id="editJurusan" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                <div class="form-group"><label>No Absen Baru</label><input type="number" id="editAbsen" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #444;"></div>
+                <button class="cyber-btn-large" style="width:100%; margin-top:10px;" onclick="requestProfileChange()">Kirim Permohonan</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="cyber-footer">© PORTAL SISWA • 2026 PADLI NURRAMADHAN</footer>
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyBdQc8A9Rr_oEH0DtCaMuJ0iNpyKy0RI6w",
+          authDomain: "uploader-9a9c8.firebaseapp.com",
+          projectId: "uploader-9a9c8",
+          storageBucket: "uploader-9a9c8.firebasestorage.app",
+          messagingSenderId: "894629618740",
+          appId: "1:894629618740:web:a0c734a10cc0d1a09e9661"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function getDeviceId() {
+            let id = localStorage.getItem('deviceId');
+            if (!id) {
+                id = 'DEV_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('deviceId', id);
+            }
+            return id;
+        }
+
+        const deviceId = getDeviceId();
+        let currentUser = null;
+        let isInitialLoad = true;
+        let activeTargetMsgId = null;
+        let pressTimer = null;
+
+        // FITUR CLOSING POPUP REAKSI DAN STIKER KETIKA DI-TAP DI LUAR AREA
+        document.addEventListener('pointerdown', function(e) {
+            const popup = document.getElementById('emojiPicker');
+            if (popup && popup.classList.contains('active')) {
+                if (!popup.contains(e.target)) {
+                    popup.classList.remove('active');
+                }
+            }
+            const stickerPicker = document.getElementById('stickerPickerStudent');
+            const btnSticker = document.getElementById('btnStickerStudent');
+            if (stickerPicker && stickerPicker.classList.contains('active')) {
+                if (!stickerPicker.contains(e.target) && !btnSticker.contains(e.target)) {
+                    stickerPicker.classList.remove('active');
+                }
+            }
+        });
+
+        if ("Notification" in window) Notification.requestPermission();
+
+        function triggerNotif(title, body) {
+            const toast = document.getElementById('toastNotif');
+            document.getElementById('toastText').innerText = `${title}: ${body}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: body, icon: 'https://cdn-icons-png.flaticon.com/512/732/732200.png' });
+            }
+        }
+
+        function triggerIgToast(text) {
+            const toast = document.getElementById('igToast');
+            toast.innerText = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openAuthModal() { openModal('authModal'); }
+        function openStudentChatModal() {
+            openModal('chatStudentModal');
+            document.getElementById('studentBadge').style.display = 'none';
+        }
+        function switchAuthTab(tab) {
+            document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
+        }
+
+        /* LOGIC TOGGLE TOMBOL STIKER SAAT MENGETIK KAYA WA */
+        function handleInputChange() {
+            const input = document.getElementById('studentChatInput');
+            const btnSticker = document.getElementById('btnStickerStudent');
+            if (input.value.length > 0) {
+                btnSticker.style.display = 'none';
+                document.getElementById('stickerPickerStudent').classList.remove('active');
+            } else {
+                btnSticker.style.display = 'flex';
+            }
+        }
+
+        function toggleStickerPicker() {
+            const stickerPicker = document.getElementById('stickerPickerStudent');
+            stickerPicker.classList.toggle('active');
+        }
+
+        async function sendSticker(stickerPath) {
+            if (!currentUser) return openAuthModal();
+            document.getElementById('stickerPickerStudent').classList.remove('active');
+            await db.collection("chats").doc(deviceId).collection("messages").add({
+                sender: currentUser.nama, stickerUrl: stickerPath, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        /* FITUR TELEPON DARURAT KE ADMIN */
+        async function callAdminEmergency() {
+            if (!currentUser) return openAuthModal();
+            await db.collection("calls").add({
+                studentName: currentUser.nama,
+                noAbsen: currentUser.noAbsen,
+                deviceId: deviceId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'calling'
+            });
+            triggerIgToast("📞 Memanggil Admin secara Darurat...");
+        }
+
+        db.collection("users").doc(deviceId).onSnapshot((doc) => {
+            if (doc.exists) {
+                currentUser = doc.data();
+                document.getElementById('editNama').value = currentUser.nama || '';
+                document.getElementById('editKelas').value = currentUser.kelas || '';
+                document.getElementById('editJurusan').value = currentUser.jurusan || '';
+                document.getElementById('editAbsen').value = currentUser.noAbsen || '';
+            }
+        });
+
+        async function processRegister() {
+            const nama = document.getElementById('regNama').value.trim();
+            const kelas = document.getElementById('regKelas').value.trim();
+            const jurusan = document.getElementById('regJurusan').value.trim();
+            const noAbsen = document.getElementById('regAbsen').value.trim();
+            const pin = document.getElementById('regPin').value.trim();
+
+            if (!nama || !kelas || !jurusan || !noAbsen || !pin) return triggerIgToast("⚠️ Semua kolom wajib diisi!");
+            await db.collection("users").doc(deviceId).set({ deviceId, nama, kelas, jurusan, noAbsen, pin });
+            triggerIgToast("✅ Pendaftaran Berhasil!");
+            closeModal('authModal');
+        }
+
+        async function processLogin() {
+            const noAbsen = document.getElementById('loginAbsen').value.trim();
+            const pin = document.getElementById('loginPin').value.trim();
+            if (!noAbsen || !pin) return triggerIgToast("⚠️ Isi No Absen dan PIN!");
+
+            const query = await db.collection("users").where("noAbsen", "==", noAbsen).where("pin", "==", pin).get();
+            if (!query.empty) {
+                const userData = query.docs[0].data();
+                await db.collection("users").doc(deviceId).set({ ...userData, deviceId });
+                triggerIgToast(`✅ Login Berhasil! Selamat datang, ${userData.nama}`);
+                closeModal('authModal');
+            } else { triggerIgToast("❌ No Absen atau PIN salah!"); }
+        }
+
+        async function uploadTugas() {
+            if (!currentUser) return openAuthModal();
+            const tugasKeInput = document.getElementById('tugasKe').value.trim();
+            const fileInput = document.getElementById('fileTugas');
+
+            if (!tugasKeInput) return triggerIgToast("⚠️ Harap isi Tugas Ke berapa terlebih dahulu!");
+            if (!fileInput.files[0]) return triggerIgToast("⚠️ Harap pilih berkas tugas terlebih dahulu!");
+
+            const file = fileInput.files[0];
+            const ext = file.name.split('.').pop();
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                await db.collection("tugas").add({
+                    deviceId, 
+                    nama: currentUser.nama, 
+                    kelas: currentUser.kelas, 
+                    jurusan: currentUser.jurusan,
+                    noAbsen: currentUser.noAbsen, 
+                    tugasKe: tugasKeInput,
+                    fileData: e.target.result,
+                    namaFileFormatted: `Tugas_${currentUser.nama}_Absen${currentUser.noAbsen} _Tugas Ke ${tugasKeInput}.${ext}`,
+                    waktuUpload: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                triggerIgToast("🚀 Tugas berhasil terkirim!");
+                document.getElementById('tugasKe').value = '';
+                fileInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // CHAT REALTIME WITH HOLD REACTION & CUSTOM PLAYER & STIKER
+        db.collection("chats").doc(deviceId).collection("messages").orderBy("timestamp", "asc")
+          .onSnapshot((snapshot) => {
+            const chatMessages = document.getElementById('studentChatMessages');
+            chatMessages.innerHTML = '';
+            
+            snapshot.forEach((doc) => {
+                const msgId = doc.id;
+                const data = doc.data();
+                const isUser = data.sender !== 'ADMIN';
+                const div = document.createElement('div');
+                
+                if (data.isDeleted) {
+                    div.className = `chat-bubble deleted ${isUser ? 'user' : 'admin'}`;
+                    div.innerHTML = `<i class="fa-solid fa-ban"></i> Chat telah dihapus oleh ${data.deletedBy || 'pengguna'}`;
+                } else {
+                    div.className = `chat-bubble ${isUser ? 'user' : 'admin'}`;
+                    let contentHtml = `<b>${isUser ? 'Saya' : 'Admin'}:</b> `;
+                    
+                    if (data.stickerUrl) {
+                        contentHtml += `<br><img src="${data.stickerUrl}" class="sticker-img" alt="Stiker" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'12\' text-anchor=\'middle\' dy=\'.3em\'>Stiker</text></svg>'">`;
+                    } else if (data.audioUrl) {
+                        contentHtml += `
+                            <div class="custom-audio-player">
+                                <button class="play-btn-custom" onclick="playCustomAudio(this, '${data.audioUrl}')"><i class="fa-solid fa-play"></i></button>
+                                <div class="audio-progress-container"><div class="audio-progress-bar"></div></div>
+                                <span class="audio-time">0:00</span>
+                            </div>
+                        `;
+                    } else {
+                        contentHtml += `${data.text || ''}`;
+                    }
+
+                    if (isUser) {
+                        contentHtml += `<button class="delete-msg-btn" onclick="deleteMessage('${msgId}')"><i class="fa-solid fa-trash"></i></button>`;
+                    }
+
+                    if (data.reaction) {
+                        contentHtml += `<div class="reaction-badge">${data.reaction}</div>`;
+                    }
+
+                    div.innerHTML = contentHtml;
+
+                    // HOLD UNTUK EMOJI REACTION
+                    div.addEventListener('touchstart', (e) => startHoldPress(e, msgId));
+                    div.addEventListener('touchend', endHoldPress);
+                    div.addEventListener('touchmove', endHoldPress);
+                    div.addEventListener('mousedown', (e) => startHoldPress(e, msgId));
+                    div.addEventListener('mouseup', endHoldPress);
+                }
+
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (!snapshot.empty) {
+                const lastMsg = snapshot.docs[snapshot.docs.length - 1].data();
+                if (lastMsg.sender === 'ADMIN' && !isInitialLoad && !lastMsg.isDeleted) {
+                    triggerNotif('Admin', lastMsg.stickerUrl ? '[Stiker]' : (lastMsg.audioUrl ? '[Voice Note]' : lastMsg.text));
+                    document.getElementById('studentBadge').style.display = 'inline-block';
+                }
+            }
+            if (isInitialLoad) setTimeout(() => { isInitialLoad = false; }, 2000);
+        });
+
+        function startHoldPress(e, msgId) {
+            endHoldPress();
+            pressTimer = setTimeout(() => {
+                activeTargetMsgId = msgId;
+                const popup = document.getElementById('emojiPicker');
+                popup.classList.add('active');
+            }, 600);
+        }
+
+        function endHoldPress() { if (pressTimer) clearTimeout(pressTimer); }
+
+        async function reactEmoji(emoji) {
+            document.getElementById('emojiPicker').classList.remove('active');
+            if (activeTargetMsgId) {
+                const msgRef = db.collection("chats").doc(deviceId).collection("messages").doc(activeTargetMsgId);
+                const docSnap = await msgRef.get();
+                
+                if (docSnap.exists) {
+                    const currentData = docSnap.data();
+                    if (currentData.reaction === emoji) {
+                        await msgRef.update({ reaction: firebase.firestore.FieldValue.delete() });
+                        triggerIgToast(`Reaksi dihapus`);
+                    } else {
+                        await msgRef.update({ reaction: emoji });
+                        const myName = currentUser ? currentUser.nama : 'Siswa';
+                        triggerIgToast(`${myName} memberi reaksi ${emoji}`);
+                    }
+                }
+            }
+        }
+
+        async function deleteMessage(msgId) {
+            const myName = currentUser ? currentUser.nama : 'Siswa';
+            await db.collection("chats").doc(deviceId).collection("messages").doc(msgId).update({
+                isDeleted: true, deletedBy: myName, text: '', audioUrl: '', stickerUrl: ''
+            });
+            triggerIgToast("🗑️ Pesan berhasil dihapus");
+        }
+
+        async function sendStudentChatMessage() {
+            if (!currentUser) return openAuthModal();
+            const input = document.getElementById('studentChatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            input.value = '';
+            handleInputChange();
+            await db.collection("chats").doc(deviceId).collection("messages").add({
+                sender: currentUser.nama, text: msg, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        // CUSTOM AUDIO PLAYER CONTROLLER
+        function playCustomAudio(btn, url) {
+            let audio = btn.audioObj;
+            const container = btn.closest('.custom-audio-player');
+            const progressBar = container.querySelector('.audio-progress-bar');
+            const timeText = container.querySelector('.audio-time');
+
+            if (!audio) {
+                audio = new Audio(url);
+                btn.audioObj = audio;
+
+                audio.ontimeupdate = () => {
+                    const pct = (audio.currentTime / audio.duration) * 100;
+                    progressBar.style.width = pct + '%';
+                    const mins = Math.floor(audio.currentTime / 60);
+                    const secs = Math.floor(audio.currentTime % 60);
+                    timeText.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                };
+
+                audio.onended = () => {
+                    btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                    progressBar.style.width = '0%';
+                };
+            }
+
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            } else {
+                audio.pause();
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            }
+        }
+
+        // DESIBEL REAL-TIME VOICE NOTE RECORDING
+        let mediaRecorder, audioChunks = [], isRecording = false, audioCtx, analyser, animFrame, recInterval, recSeconds = 0;
+
+        async function toggleRecordAudio(role) {
+            const btn = document.getElementById('btnMicStudent');
+            const btnSticker = document.getElementById('btnStickerStudent');
+            const input = document.getElementById('studentChatInput');
+            const box = document.getElementById('recordingBoxStudent');
+            const btnSend = document.getElementById('btnSendStudent');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    analyser.fftSize = 32;
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                    const bars = box.querySelectorAll('.db-bar');
+                    function updateWaves() {
+                        analyser.getByteFrequencyData(dataArray);
+                        bars.forEach((bar, idx) => {
+                            const val = dataArray[idx % dataArray.length] || 10;
+                            bar.style.height = Math.max(4, (val / 255) * 22) + 'px';
+                        });
+                        if (isRecording) animFrame = requestAnimationFrame(updateWaves);
+                    }
+                    updateWaves();
+
+                    recSeconds = 0;
+                    document.getElementById('recTimerStudent').innerText = "00:00";
+                    recInterval = setInterval(() => {
+                        recSeconds++;
+                        const m = Math.floor(recSeconds/60).toString().padStart(2,'0');
+                        const s = (recSeconds%60).toString().padStart(2,'0');
+                        document.getElementById('recTimerStudent').innerText = `${m}:${s}`;
+                    }, 1000);
+
+                    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = async () => {
+                            if (!currentUser) return openAuthModal();
+                            await db.collection("chats").doc(deviceId).collection("messages").add({
+                                sender: currentUser.nama, audioUrl: reader.result, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        };
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btn.classList.add('recording');
+                    btnSticker.style.display = 'none';
+                    input.style.display = 'none';
+                    btnSend.style.display = 'none';
+                    box.style.display = 'flex';
+                } catch(err) { triggerIgToast("⚠️ Izin Mikrofon Ditolak!"); }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                clearInterval(recInterval);
+                cancelAnimationFrame(animFrame);
+                if(audioCtx) audioCtx.close();
+
+                btn.classList.remove('recording');
+                box.style.display = 'none';
+                input.style.display = 'block';
+                btnSend.style.display = 'flex';
+                handleInputChange();
+            }
+        }
+
+        async function requestProfileChange() {
+            if (!currentUser) return triggerIgToast("⚠️ Silakan login terlebih dahulu!");
+            const pNama = document.getElementById('editNama').value;
+            const pKelas = document.getElementById('editKelas').value;
+            const pJurusan = document.getElementById('editJurusan').value;
+            const pAbsen = document.getElementById('editAbsen').value;
+            if (!pNama || !pKelas || !pJurusan || !pAbsen) return triggerIgToast("⚠️ Isi semua kolom!");
+
+            await db.collection("users").doc(deviceId).update({
+                statusEdit: 'pending', pendingData: { nama: pNama, kelas: pKelas, jurusan: pJurusan, noAbsen: pAbsen }
+            });
+            triggerIgToast("📩 Permohonan dikirim ke admin.");
+            closeModal('editProfileModal');
+        }
+    </script>
+</body>
+</html>
