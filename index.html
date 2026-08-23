@@ -175,20 +175,102 @@
             outline: none !important; border-radius: 20px !important; margin: 0 !important; min-width: 0 !important;
         }
 
-        /* STICKER PICKER POPUP */
-        .sticker-picker-container {
-            position: absolute; bottom: 58px; left: 10px; background: #181818; border: 1px solid #ff0055;
-            border-radius: 12px; padding: 10px; display: none; gap: 10px; z-index: 99;
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); max-width: 90%; overflow-x: auto;
+
+        /* ========== STICKER PANEL WA STYLE (SCROLLABLE + CATEGORY) ========== */
+        .sticker-panel {
+            position: absolute;
+            bottom: 58px;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-top: 1px solid #ff0055;
+            border-radius: 16px 16px 0 0;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            max-height: 340px;
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.6);
+            overflow: hidden;
         }
-        .sticker-picker-container.active { display: flex; }
+        .sticker-panel.active { display: flex; }
+
+        .sticker-categories {
+            display: flex;
+            background: #222;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .sticker-cat-btn {
+            flex: 1;
+            min-width: 70px;
+            padding: 11px 6px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 0.78rem;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .sticker-cat-btn.active {
+            color: #ff0055;
+            border-bottom-color: #ff0055;
+            background: rgba(255,0,85,0.08);
+        }
+        .sticker-cat-btn:active { background: rgba(255,0,85,0.15); }
+
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+            max-height: 270px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ff0055 #222;
+        }
+        .sticker-grid::-webkit-scrollbar { width: 5px; }
+        .sticker-grid::-webkit-scrollbar-track { background: #222; }
+        .sticker-grid::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 3px; }
+
         .sticker-item {
-            width: 55px; height: 55px; border-radius: 8px; border: 1px dashed #ff0055; background: #252525;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
-            overflow: hidden; transition: transform 0.2s;
+            aspect-ratio: 1 / 1;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #252525;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.15s, border-color 0.15s;
+            position: relative;
         }
-        .sticker-item:hover { transform: scale(1.1); }
-        .sticker-item img { width: 100%; height: 100%; object-fit: cover; }
+        .sticker-item:active { transform: scale(0.92); border-color: #ff0055; }
+        .sticker-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        .sticker-item .sticker-label {
+            position: absolute;
+            bottom: 2px;
+            left: 0; right: 0;
+            text-align: center;
+            font-size: 0.55rem;
+            color: #ff0055;
+            background: rgba(0,0,0,0.6);
+            padding: 1px 0;
+            pointer-events: none;
+        }
 
         /* BOX DESIBEL WA RECORDING */
         .recording-box {
@@ -307,13 +389,18 @@
                         </div>
 
                         <div class="chat-input-controls">
-                            <!-- POPUP SELECTOR STIKER -->
-                            <div class="sticker-picker-container" id="stickerPickerStudent">
-                                <div class="sticker-item" onclick="sendSticker('stiker1.png')"><img src="stiker1.png" alt="Stiker 1" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 1</text></svg>'"></div>
-                                <div class="sticker-item" onclick="sendSticker('stiker2.png')"><img src="stiker2.png" alt="Stiker 2" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 2</text></svg>'"></div>
-                                <div class="sticker-item" onclick="sendSticker('stiker3.png')"><img src="stiker3.png" alt="Stiker 3" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 3</text></svg>'"></div>
-                                <div class="sticker-item" onclick="sendSticker('stiker4.png')"><img src="stiker4.png" alt="Stiker 4" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 4</text></svg>'"></div>
-                                <div class="sticker-item" onclick="sendSticker('stiker5.png')"><img src="stiker5.png" alt="Stiker 5" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'100%\' height=\'100%\' fill=\'%23333\'/><text x=\'50%\' y=\'50%\' fill=\'%23ff0055\' font-size=\'10\' text-anchor=\'middle\' dy=\'.3em\'>Stiker 5</text></svg>'"></div>
+                            
+                            <!-- STICKER PANEL WA STYLE -->
+                            <div class="sticker-panel" id="stickerPickerStudent">
+                                <div class="sticker-categories" id="stickerCatsStudent">
+                                    <button class="sticker-cat-btn active" data-cat="bocil" onclick="switchStickerCat('bocil', 'student')">Bocil</button>
+                                    <button class="sticker-cat-btn" data-cat="anime" onclick="switchStickerCat('anime', 'student')">Anime</button>
+                                    <button class="sticker-cat-btn" data-cat="ytta" onclick="switchStickerCat('ytta', 'student')">YTTA</button>
+                                    <button class="sticker-cat-btn" data-cat="kartun" onclick="switchStickerCat('kartun', 'student')">Kartun</button>
+                                </div>
+                                <div class="sticker-grid" id="stickerGridStudent">
+                                    <!-- diisi oleh JS -->
+                                </div>
                             </div>
 
                             <!-- TOMBOL STIKER WA (KIRI) -->
@@ -429,7 +516,7 @@
             const stickerPicker = document.getElementById('stickerPickerStudent');
             const btnSticker = document.getElementById('btnStickerStudent');
             if (stickerPicker && stickerPicker.classList.contains('active')) {
-                if (!stickerPicker.contains(e.target) && !btnSticker.contains(e.target)) {
+                if (!stickerPicker.contains(e.target) && btnSticker && !btnSticker.contains(e.target)) {
                     stickerPicker.classList.remove('active');
                 }
             }
@@ -512,9 +599,73 @@
             }
         });
 
+
+        /* ========== STICKER SYSTEM (4 kategori x 60 stiker) ========== */
+        const STICKER_CATEGORIES = ['bocil', 'anime', 'ytta', 'kartun'];
+        let currentStickerCat = { student: 'bocil', admin: 'bocil' };
+
+        function generateStickerPlaceholder(cat, num) {
+            const label = cat + num;
+            return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='%23252525'/><text x='50%' y='45%' fill='%23ff0055' font-size='11' text-anchor='middle' dy='.3em' font-family='Arial'>${label}</text><text x='50%' y='62%' fill='%23888' font-size='9' text-anchor='middle' dy='.3em'>png</text></svg>`;
+        }
+
+        function renderStickerGrid(target, cat) {
+            const gridId = target === 'student' ? 'stickerGridStudent' : 'stickerGridAdmin';
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            grid.innerHTML = '';
+            // 4 kolom x 15 baris = 60 stiker
+            for (let i = 1; i <= 60; i++) {
+                const filename = `${cat}${i}.png`;
+                const item = document.createElement('div');
+                item.className = 'sticker-item';
+                item.onclick = () => {
+                    if (target === 'student') sendSticker(filename);
+                    else sendStickerAdmin(filename);
+                };
+                const img = document.createElement('img');
+                img.src = filename;
+                img.alt = filename;
+                img.onerror = function() {
+                    this.src = generateStickerPlaceholder(cat, i);
+                    this.onerror = null;
+                };
+                item.appendChild(img);
+                grid.appendChild(item);
+            }
+        }
+
+        function switchStickerCat(cat, target) {
+            currentStickerCat[target] = cat;
+            const catsId = target === 'student' ? 'stickerCatsStudent' : 'stickerCatsAdmin';
+            const cats = document.getElementById(catsId);
+            if (cats) {
+                cats.querySelectorAll('.sticker-cat-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cat === cat);
+                });
+            }
+            renderStickerGrid(target, cat);
+        }
+
         function toggleStickerPicker() {
-            const stickerPicker = document.getElementById('stickerPickerStudent');
-            stickerPicker.classList.toggle('active');
+            const panel = document.getElementById('stickerPickerStudent');
+            if (!panel) return;
+            const isActive = panel.classList.contains('active');
+            panel.classList.toggle('active');
+            if (!isActive) {
+                // buka → pastikan grid sudah ter-render
+                renderStickerGrid('student', currentStickerCat.student);
+            }
+        }
+
+        function toggleStickerPickerAdmin() {
+            const panel = document.getElementById('stickerPickerAdmin');
+            if (!panel) return;
+            const isActive = panel.classList.contains('active');
+            panel.classList.toggle('active');
+            if (!isActive) {
+                renderStickerGrid('admin', currentStickerCat.admin);
+            }
         }
 
         async function sendSticker(stickerPath) {
@@ -531,6 +682,7 @@
 
             await db.collection("chats").doc(deviceId).collection("messages").add(payload);
         }
+
 
         /* FITUR TELEPON DARURAT KE ADMIN */
         async function callAdminEmergency() {
@@ -934,3 +1086,4 @@
     </script>
 </body>
 </html>
+
