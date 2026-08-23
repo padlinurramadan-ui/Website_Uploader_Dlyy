@@ -176,101 +176,129 @@
         }
 
 
-        /* ========== STICKER PANEL WA STYLE (SCROLLABLE + CATEGORY) ========== */
+        
+        /* ===== STICKER PANEL - ANTI TUMPUK KETAT ===== */
         .sticker-panel {
-            position: absolute;
-            bottom: 58px;
-            left: 0;
-            right: 0;
-            background: #1a1a1a;
-            border-top: 1px solid #ff0055;
-            border-radius: 16px 16px 0 0;
+            position: absolute !important;
+            bottom: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            background: #1a1a1a !important;
+            border-top: 1px solid #ff0055 !important;
+            border-radius: 14px 14px 0 0 !important;
             display: none;
-            flex-direction: column;
-            z-index: 100;
-            max-height: 340px;
-            box-shadow: 0 -8px 25px rgba(0,0,0,0.6);
-            overflow: hidden;
+            flex-direction: column !important;
+            z-index: 600 !important;
+            height: 270px !important;
+            max-height: 270px !important;
+            min-height: 270px !important;
+            overflow: hidden !important;
+            box-shadow: 0 -6px 20px rgba(0,0,0,0.7) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }
-        .sticker-panel.active { display: flex; }
+        .sticker-panel.active { display: flex !important; }
 
         .sticker-categories {
-            display: flex;
-            background: #222;
-            border-bottom: 1px solid #333;
-            flex-shrink: 0;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            display: flex !important;
+            flex-shrink: 0 !important;
+            height: 40px !important;
+            min-height: 40px !important;
+            max-height: 40px !important;
+            background: #222 !important;
+            border-bottom: 1px solid #333 !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
         }
         .sticker-cat-btn {
-            flex: 1;
-            min-width: 70px;
-            padding: 11px 6px;
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 0.78rem;
-            font-family: 'Noto Sans JP', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            flex: 1 0 auto !important;
+            min-width: 68px !important;
+            height: 40px !important;
+            padding: 0 6px !important;
+            background: none !important;
+            border: none !important;
+            color: #888 !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            border-bottom: 3px solid transparent !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .sticker-cat-btn.active {
-            color: #ff0055;
-            border-bottom-color: #ff0055;
-            background: rgba(255,0,85,0.08);
+            color: #ff0055 !important;
+            border-bottom-color: #ff0055 !important;
+            background: rgba(255,0,85,0.12) !important;
         }
-        .sticker-cat-btn:active { background: rgba(255,0,85,0.15); }
 
         .sticker-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            padding: 12px;
-            overflow-y: auto;
-            flex: 1;
-            max-height: 270px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: #ff0055 #222;
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            grid-auto-rows: 68px !important;
+            gap: 5px !important;
+            padding: 7px !important;
+            overflow-x: hidden !important;
+            overflow-y: scroll !important;
+            height: 230px !important;
+            max-height: 230px !important;
+            min-height: 230px !important;
+            flex: none !important;
+            align-content: start !important;
+            -webkit-overflow-scrolling: touch !important;
+            box-sizing: border-box !important;
         }
-        .sticker-grid::-webkit-scrollbar { width: 5px; }
-        .sticker-grid::-webkit-scrollbar-track { background: #222; }
-        .sticker-grid::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 3px; }
+        .sticker-grid::-webkit-scrollbar { width: 3px; }
+        .sticker-grid::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 2px; }
 
         .sticker-item {
-            aspect-ratio: 1 / 1;
-            border-radius: 10px;
-            border: 1px solid #333;
-            background: #252525;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.15s, border-color 0.15s;
-            position: relative;
+            width: 100% !important;
+            height: 68px !important;
+            max-height: 68px !important;
+            border-radius: 8px !important;
+            border: 1px solid #333 !important;
+            background: #252525 !important;
+            display: none;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
-        .sticker-item:active { transform: scale(0.92); border-color: #ff0055; }
         .sticker-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            pointer-events: none;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            pointer-events: none !important;
+            display: block !important;
         }
-        .sticker-item .sticker-label {
-            position: absolute;
-            bottom: 2px;
-            left: 0; right: 0;
-            text-align: center;
-            font-size: 0.55rem;
-            color: #ff0055;
-            background: rgba(0,0,0,0.6);
-            padding: 1px 0;
-            pointer-events: none;
+
+        /* ===== CHAT BACKGROUND ===== */
+        .chat-messages {
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
         }
+        .btn-bg-chat {
+            background: #333 !important;
+            border: 1px solid #ff0055 !important;
+            color: #fff !important;
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            flex-shrink: 0 !important;
+            font-size: 0.95rem !important;
+            padding: 0 !important;
+        }
+
 
         /* BOX DESIBEL WA RECORDING */
         .recording-box {
@@ -303,6 +331,73 @@
 
         .cyber-footer { text-align: center; padding: 15px; margin-top: auto; background: rgba(5, 5, 5, 0.9); border-top: 1px solid rgba(220, 20, 60, 0.3); font-size: 0.8rem; color: #dc143c; }
 
+
+        /* ===== PIN / CONTEXT MENU (iOS WA STYLE) ===== */
+        .msg-context-menu {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #1c1c1e;
+            border-radius: 14px;
+            border: 1px solid #ff0055;
+            box-shadow: 0 0 30px rgba(255,0,85,0.5);
+            z-index: 100000;
+            min-width: 220px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .msg-context-menu.active { transform: translate(-50%, -50%) scale(1); }
+        .ctx-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; color: #fff; font-size: 0.9rem;
+            cursor: pointer; border-bottom: 1px solid #2c2c2e;
+            transition: background 0.15s;
+        }
+        .ctx-item:last-child { border-bottom: none; }
+        .ctx-item:active { background: #2c2c2e; }
+        .ctx-item.pin { color: #ff0055; font-weight: 600; }
+        .ctx-item i { width: 22px; text-align: center; }
+
+        /* ===== READ RECEIPTS (TICKS) ===== */
+        .msg-ticks {
+            display: inline-flex; align-items: center; gap: 1px;
+            margin-left: 6px; font-size: 0.7rem; vertical-align: middle;
+        }
+        .tick-single { color: #888; }
+        .tick-double { color: #ddd; }
+        .tick-read { color: #ff0055; text-shadow: 0 0 6px #ff0055; }
+
+        /* ===== PINNED BANNER ===== */
+        .pinned-banner {
+            background: rgba(255,0,85,0.12); border-bottom: 1px solid #ff0055;
+            padding: 8px 12px; font-size: 0.78rem; color: #ff0055;
+            display: none; align-items: center; gap: 8px; cursor: pointer;
+        }
+        .pinned-banner.active { display: flex; }
+        .pinned-banner .pin-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ===== SYSTEM MESSAGE (STOP CHAT) ===== */
+        .system-msg {
+            align-self: center; background: rgba(255,0,85,0.15);
+            color: #ff0055; font-size: 0.75rem; padding: 6px 14px;
+            border-radius: 12px; margin: 10px 0; text-align: center;
+            border: 1px solid rgba(255,0,85,0.3);
+        }
+
+
+        /* Cegah menu browser saat long-press chat */
+        .chat-messages, .chat-bubble, .chat-bubble * {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-user-drag: none !important;
+        }
+        .chat-input, .chat-input * {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
         @media (max-width: 768px) {
             .student-nav-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
             .top-left-nav, .top-right-nav { display: contents; }
@@ -310,9 +405,30 @@
             .header { margin-top: 10px; margin-bottom: 15px; }
             h1 { font-size: 1.4rem; }
         }
+    
+        /* ===== READ RECEIPTS - MERAH MENYALA ===== */
+        .msg-ticks {
+            display: inline-flex;
+            align-items: center;
+            gap: 1px;
+            margin-left: 6px;
+            font-size: 0.78rem;
+            vertical-align: middle;
+            float: right;
+            line-height: 1;
+        }
+        .tick-single { color: #888; }
+        .tick-double { color: #ccc; }
+        .tick-read { color: #ff0055; text-shadow: 0 0 5px #ff0055, 0 0 8px #ff0055; }
+
     </style>
 </head>
 <body>
+
+    <div id="offlineBar" style="display:none; position:fixed; top:0; left:0; right:0; background:#ff0055; color:#fff; text-align:center; padding:6px; font-size:0.8rem; z-index:99999; font-family:'Noto Sans JP',sans-serif;">
+        📡 Mode Offline — Pesan akan dikirim saat online
+    </div>
+
 
     <div id="toastNotif" class="toast-notification"><i class="fa-solid fa-bell fa-bounce"></i> <span id="toastText">Pesan masuk!</span></div>
     <div id="igToast" class="ig-toast">Notifikasi IG</div>
@@ -347,6 +463,20 @@
         <button class="cyber-btn-large" style="width:100%; margin-top:10px; padding:14px; font-size:1rem;" onclick="uploadTugas()"><i class="fa-solid fa-paper-plane"></i> KIRIM TUGAS</button>
     </div>
 
+    
+    <!-- CONTEXT MENU LONG PRESS (PIN + REACT) -->
+    <div class="msg-context-menu" id="msgContextMenu" onclick="event.stopPropagation()">
+        <div class="ctx-item pin" onclick="pinMessage()"><i class="fa-solid fa-thumbtack"></i> Sematkan Chat</div>
+        <div class="ctx-item" onclick="reactFromMenu('😞')">😞</div>
+        <div class="ctx-item" onclick="reactFromMenu('😳')">😳</div>
+        <div class="ctx-item" onclick="reactFromMenu('😎')">😎</div>
+        <div class="ctx-item" onclick="reactFromMenu('🥶')">🥶</div>
+        <div class="ctx-item" onclick="reactFromMenu('🤣')">🤣</div>
+        <div class="ctx-item" onclick="reactFromMenu('😭')">😭</div>
+        <div class="ctx-item" onclick="reactFromMenu('🙏🏻')">🙏🏻</div>
+        <div class="ctx-item" onclick="reactFromMenu('❤️')">❤️</div>
+    </div>
+
     <!-- EMOJI PICKER POPUP FLOATING -->
     <div class="emoji-picker-popup" id="emojiPicker" onclick="event.stopPropagation()">
         <span onclick="reactEmoji('😞')">😞</span><span onclick="reactEmoji('😳')">😳</span>
@@ -369,6 +499,11 @@
             </div>
             <div class="modal-body" style="padding:10px;">
                 <div class="chat-box">
+                    <div class="pinned-banner" id="pinnedBannerStudent" onclick="scrollToPinned()">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <span class="pin-text" id="pinnedTextStudent">Pesan disematkan</span>
+                        <i class="fa-solid fa-xmark" onclick="event.stopPropagation(); unpinMessage()"></i>
+                    </div>
                     <div class="chat-messages" id="studentChatMessages"></div>
                     
                     <!-- GELEMBUNG INDIKATOR ADMIN SEDANG MENGETIK (KOTAK HIJAU) -->
@@ -404,6 +539,12 @@
                             </div>
 
                             <!-- TOMBOL STIKER WA (KIRI) -->
+                            
+                            <button class="btn-bg-chat" id="btnBgChat" title="Ganti Background Chat" onclick="document.getElementById('bgFileInput').click()">
+                                <i class="fa-solid fa-image"></i>
+                            </button>
+                            <input type="file" id="bgFileInput" accept="image/*" style="display:none;" onchange="changeChatBackground(this)">
+
                             <button class="btn-sticker-wa" id="btnStickerStudent" onclick="toggleStickerPicker()"><i class="fa-regular fa-face-smile"></i></button>
 
                             <button class="btn-mic-wa" id="btnMicStudent" onclick="toggleRecordAudio('student')"><i class="fa-solid fa-microphone"></i></button>
@@ -487,6 +628,31 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        // OFFLINE SUPPORT (mirip FB Lite)
+        try {
+            firebase.firestore().enablePersistence({ synchronizeTabs: true })
+              .catch((err) => {
+                if (err.code === 'failed-precondition') {
+                    console.log('Persistence gagal: multiple tabs');
+                } else if (err.code === 'unimplemented') {
+                    console.log('Browser tidak support persistence');
+                }
+              });
+        } catch(e) { console.log(e); }
+
+        // Indikator offline
+        window.addEventListener('online', () => {
+            const bar = document.getElementById('offlineBar');
+            if (bar) bar.style.display = 'none';
+            triggerIgToast('🌐 Koneksi kembali');
+        });
+        window.addEventListener('offline', () => {
+            const bar = document.getElementById('offlineBar');
+            if (bar) bar.style.display = 'block';
+            triggerIgToast('📡 Mode Offline aktif');
+        });
+
 
         function getDeviceId() {
             let id = localStorage.getItem('deviceId');
@@ -614,21 +780,22 @@
             const grid = document.getElementById(gridId);
             if (!grid) return;
             grid.innerHTML = '';
-            // 4 kolom x 15 baris = 60 stiker
             for (let i = 1; i <= 60; i++) {
-                const filename = `${cat}${i}.png`;
+                const filename = cat + i + '.png';
                 const item = document.createElement('div');
                 item.className = 'sticker-item';
-                item.onclick = () => {
+                item.onclick = function() {
                     if (target === 'student') sendSticker(filename);
                     else sendStickerAdmin(filename);
                 };
                 const img = document.createElement('img');
                 img.src = filename;
                 img.alt = filename;
+                img.onload = function() {
+                    item.style.display = 'flex';
+                };
                 img.onerror = function() {
-                    this.src = generateStickerPlaceholder(cat, i);
-                    this.onerror = null;
+                    item.remove();
                 };
                 item.appendChild(img);
                 grid.appendChild(item);
@@ -668,12 +835,135 @@
             }
         }
 
+        
+        /* ========== PRESENCE (ONLINE/OFFLINE) ========== */
+        function setPresence(online) {
+            if (!deviceId) return;
+            db.collection("presence").doc(deviceId).set({
+                online: online,
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                role: 'siswa',
+                name: currentUser ? currentUser.nama : 'Siswa'
+            }, { merge: true });
+        }
+        // heartbeat setiap 20 detik
+        setInterval(() => setPresence(true), 20000);
+        window.addEventListener('beforeunload', () => setPresence(false));
+        document.addEventListener('visibilitychange', () => {
+            setPresence(document.visibilityState === 'visible');
+        });
+        // set online saat load
+        setTimeout(() => setPresence(true), 1000);
+
+        /* ========== READ RECEIPTS HELPER ========== */
+        function getTicksHtml(msgData, isMyMsg) {
+            if (!isMyMsg) return '';
+            // status: sent / delivered / read
+            const status = msgData.status || 'sent';
+            if (status === 'read') {
+                return `<span class="msg-ticks tick-read"><i class="fa-solid fa-check-double"></i></span>`;
+            } else if (status === 'delivered') {
+                return `<span class="msg-ticks tick-double"><i class="fa-solid fa-check-double"></i></span>`;
+            } else {
+                return `<span class="msg-ticks tick-single"><i class="fa-solid fa-check"></i></span>`;
+            }
+        }
+
+        /* ========== PIN MESSAGE ========== */
+        let activeCtxMsgId = null;
+        let activeCtxMsgText = '';
+
+        function showContextMenu(msgId, text, e) {
+            activeCtxMsgId = msgId;
+            activeCtxMsgText = text || '[Stiker/Voice]';
+            const menu = document.getElementById('msgContextMenu');
+            menu.classList.add('active');
+        }
+
+        function hideContextMenu() {
+            document.getElementById('msgContextMenu').classList.remove('active');
+            activeCtxMsgId = null;
+        }
+
+        document.addEventListener('pointerdown', function(e) {
+            const menu = document.getElementById('msgContextMenu');
+            if (menu && menu.classList.contains('active') && !menu.contains(e.target)) {
+                hideContextMenu();
+            }
+        });
+
+        async function pinMessage() {
+            if (!activeCtxMsgId || !deviceId) return;
+            await db.collection("chats").doc(deviceId).set({
+                pinnedMsgId: activeCtxMsgId,
+                pinnedText: activeCtxMsgText
+            }, { merge: true });
+            hideContextMenu();
+            triggerIgToast("📌 Chat disematkan");
+        }
+
+        async function unpinMessage() {
+            if (!deviceId) return;
+            await db.collection("chats").doc(deviceId).set({
+                pinnedMsgId: firebase.firestore.FieldValue.delete(),
+                pinnedText: firebase.firestore.FieldValue.delete()
+            }, { merge: true });
+            document.getElementById('pinnedBannerStudent').classList.remove('active');
+        }
+
+        function scrollToPinned() {
+            // simple scroll to top for now
+            const area = document.getElementById('studentChatMessages');
+            if (area) area.scrollTop = 0;
+        }
+
+        function reactFromMenu(emoji) {
+            if (activeCtxMsgId) {
+                activeTargetMsgId = activeCtxMsgId;
+                reactEmoji(emoji);
+            }
+            hideContextMenu();
+        }
+
+        // listen pinned
+        db.collection("chats").doc(deviceId).onSnapshot((doc) => {
+            const banner = document.getElementById('pinnedBannerStudent');
+            if (doc.exists && doc.data().pinnedMsgId) {
+                banner.classList.add('active');
+                document.getElementById('pinnedTextStudent').innerText = doc.data().pinnedText || 'Pesan disematkan';
+            } else {
+                banner.classList.remove('active');
+            }
+        });
+
+        /* ========== MARK AS READ when chat open ========== */
+        function markMessagesAsRead() {
+            if (!deviceId) return;
+            db.collection("chats").doc(deviceId).collection("messages")
+              .where("sender", "==", "ADMIN")
+              .where("status", "in", ["sent", "delivered"])
+              .get().then(snap => {
+                const batch = db.batch();
+                snap.forEach(doc => {
+                    batch.update(doc.ref, { status: 'read' });
+                });
+                if (!snap.empty) batch.commit();
+              }).catch(()=>{});
+        }
+
+        // call mark as read when modal opens
+        const origOpenStudentChat = openStudentChatModal;
+        openStudentChatModal = function() {
+            origOpenStudentChat();
+            setTimeout(markMessagesAsRead, 800);
+        };
+
         async function sendSticker(stickerPath) {
             if (!currentUser) return openAuthModal();
             document.getElementById('stickerPickerStudent').classList.remove('active');
             
             let payload = {
-                sender: currentUser.nama, stickerUrl: stickerPath, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                sender: currentUser.nama, stickerUrl: stickerPath, status: 'sent', timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
             if (currentReplyDataStudent) {
                 payload.replyTo = currentReplyDataStudent;
@@ -816,6 +1106,7 @@
                     if (data.reaction) {
                         contentHtml += `<div class="reaction-badge">${data.reaction}</div>`;
                     }
+                    contentHtml += getTicksHtml(data, isUser);
 
                     div.innerHTML = contentHtml;
 
@@ -823,10 +1114,10 @@
                     setupSwipeToReply(div, isUser ? 'Saya' : 'Admin', data.stickerUrl ? '[Stiker]' : (data.audioUrl ? '[Voice Note]' : (data.text || '')));
 
                     // HOLD UNTUK EMOJI REACTION
-                    div.addEventListener('touchstart', (e) => startHoldPress(e, msgId));
+                    div.addEventListener('touchstart', (e) => startHoldPress(e, msgId, data.stickerUrl ? '[Stiker]' : (data.audioUrl ? '[Voice Note]' : (data.text || ''))));
                     div.addEventListener('touchend', endHoldPress);
                     div.addEventListener('touchmove', endHoldPress);
-                    div.addEventListener('mousedown', (e) => startHoldPress(e, msgId));
+                    div.addEventListener('mousedown', (e) => startHoldPress(e, msgId, data.stickerUrl ? '[Stiker]' : (data.audioUrl ? '[Voice Note]' : (data.text || ''))));
                     div.addEventListener('mouseup', endHoldPress);
                 }
 
@@ -890,13 +1181,12 @@
             document.getElementById('replyPreviewStudent').classList.remove('active');
         }
 
-        function startHoldPress(e, msgId) {
+                function startHoldPress(e, msgId, msgText) {
             endHoldPress();
             pressTimer = setTimeout(() => {
                 activeTargetMsgId = msgId;
-                const popup = document.getElementById('emojiPicker');
-                popup.classList.add('active');
-            }, 600);
+                showContextMenu(msgId, msgText, e);
+            }, 700);
         }
 
         function endHoldPress() { if (pressTimer) clearTimeout(pressTimer); }
@@ -940,7 +1230,7 @@
             updateStudentTypingStatus(false);
 
             let payload = {
-                sender: currentUser.nama, text: msg, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                sender: currentUser.nama, text: msg, status: 'sent', timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             if (currentReplyDataStudent) {
@@ -1083,6 +1373,59 @@
             triggerIgToast("📩 Permohonan dikirim ke admin.");
             closeModal('editProfileModal');
         }
+
+        // Blokir menu klik kanan / long-press browser pada bubble chat
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('.chat-bubble') || e.target.closest('.chat-messages')) {
+                e.preventDefault();
+                return false;
+            }
+        }, { passive: false });
+
+
+        /* ===== CHAT BACKGROUND (SISWA) ===== */
+        function changeChatBackground(input) {
+            if (!input.files || !input.files[0]) return;
+            if (!currentUser) return openAuthModal();
+            const file = input.files[0];
+            if (file.size > 2 * 1024 * 1024) return triggerIgToast("⚠️ Max 2MB");
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const dataUrl = e.target.result;
+                await db.collection("chats").doc(deviceId).set({
+                    background: dataUrl
+                }, { merge: true });
+                applyChatBackground(dataUrl);
+                triggerIgToast("🖼️ Background diganti");
+            };
+            reader.readAsDataURL(file);
+            input.value = '';
+        }
+        function applyChatBackground(url) {
+            const area = document.getElementById('studentChatMessages');
+            if (area) {
+                if (url) {
+                    area.style.backgroundImage = `url(${url})`;
+                    area.style.backgroundColor = 'rgba(0,0,0,0.55)';
+                } else {
+                    area.style.backgroundImage = 'none';
+                    area.style.backgroundColor = '';
+                }
+            }
+        }
+        // load when chat modal opens
+        const _origOpenChat = openStudentChatModal;
+        openStudentChatModal = function() {
+            _origOpenChat();
+            db.collection("chats").doc(deviceId).get().then(doc => {
+                if (doc.exists && doc.data().background) {
+                    applyChatBackground(doc.data().background);
+                } else {
+                    applyChatBackground(null);
+                }
+            });
+        };
+
     </script>
 </body>
 </html>
