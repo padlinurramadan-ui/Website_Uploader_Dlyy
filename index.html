@@ -421,9 +421,85 @@
         .tick-double { color: #ccc; }
         .tick-read { color: #ff0055; text-shadow: 0 0 5px #ff0055, 0 0 8px #ff0055; }
 
+    
+        /* ===== BACKGROUND CROP + BRIGHTNESS + DRAG ===== */
+        .bg-crop-modal {
+            position: fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.93); z-index: 99999;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .bg-crop-modal.active { display: flex; }
+        .bg-crop-preview {
+            width: 100%; max-width: 340px; height: 280px;
+            background: #111; border: 2px solid #ff0055;
+            border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+            position: relative; cursor: grab; touch-action: none;
+        }
+        .bg-crop-preview:active { cursor: grabbing; }
+        .bg-crop-preview img {
+            width: 140%; height: 140%;
+            object-fit: cover; display: block;
+            position: absolute; top: -20%; left: -20%;
+            max-width: none;
+            user-select: none; -webkit-user-drag: none;
+            pointer-events: none;
+        }
+        .bg-crop-controls { width:100%; max-width:340px; color:#fff; font-family:'Noto Sans JP',sans-serif; }
+        .bg-crop-controls label { display:block; font-size:0.8rem; color:#ff0055; margin-bottom:6px; }
+        .bg-crop-controls input[type=range] { width:100%; margin-bottom:14px; accent-color:#ff0055; }
+        .bg-crop-actions { display:flex; gap:10px; }
+        .bg-crop-actions button { flex:1; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
+        .bg-btn-cancel { background:#333; color:#fff; }
+        .bg-btn-ok { background:#ff0055; color:#fff; }
+
+        /* Background cover yang benar di area chat */
+        .chat-messages {
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: local !important;
+        }
+
+    
+        
+
+    
+        /* BACKGROUND DIAM - tidak ikut panjang chat */
+        .chat-box {
+            position: relative !important;
+            overflow: hidden !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+        }
+        .chat-messages {
+            background: transparent !important;
+            background-image: none !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+        }
+
     </style>
 </head>
 <body>
+
+    <div class="bg-crop-modal" id="bgCropModal">
+        <div class="bg-crop-preview" id="bgCropPreview">
+            <img id="bgCropImg" src="" alt="Preview">
+        </div>
+        <div class="bg-crop-controls">
+            <label>Geser foto untuk atur posisi • Atur kecerahan</label>
+            <input type="range" id="bgBrightness" min="30" max="130" value="100" oninput="updateBgPreview()">
+            <div class="bg-crop-actions">
+                <button class="bg-btn-cancel" onclick="closeBgCrop()">Batal</button>
+                <button class="bg-btn-ok" onclick="confirmBgCrop()">Pasang Background</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="offlineBar" style="display:none; position:fixed; top:0; left:0; right:0; background:#ff0055; color:#fff; text-align:center; padding:6px; font-size:0.8rem; z-index:99999; font-family:'Noto Sans JP',sans-serif;">
         📡 Mode Offline — Pesan akan dikirim saat online
@@ -1384,34 +1460,98 @@
 
 
         /* ===== CHAT BACKGROUND (SISWA) ===== */
+        /* ===== CHAT BACKGROUND + CROP + BRIGHTNESS + DRAG (SISWA) ===== */
+        let tempBgDataUrl = null;
+        let bgDrag = { active: false, startX: 0, startY: 0, imgX: 0, imgY: 0, currentX: -20, currentY: -20 };
+
         function changeChatBackground(input) {
             if (!input.files || !input.files[0]) return;
             if (!currentUser) return openAuthModal();
             const file = input.files[0];
-            if (file.size > 2 * 1024 * 1024) return triggerIgToast("⚠️ Max 2MB");
+            if (file.size > 3 * 1024 * 1024) return triggerIgToast("⚠️ Max 3MB");
             const reader = new FileReader();
-            reader.onload = async function(e) {
-                const dataUrl = e.target.result;
-                await db.collection("chats").doc(deviceId).set({
-                    background: dataUrl
-                }, { merge: true });
-                applyChatBackground(dataUrl);
-                triggerIgToast("🖼️ Background diganti");
+            reader.onload = function(e) {
+                tempBgDataUrl = e.target.result;
+                const img = document.getElementById('bgCropImg');
+                img.src = tempBgDataUrl;
+                document.getElementById('bgBrightness').value = 100;
+                updateBgPreview();
+                document.getElementById('bgCropModal').classList.add('active');
+                setTimeout(initBgDrag, 50);
             };
             reader.readAsDataURL(file);
             input.value = '';
         }
-        function applyChatBackground(url) {
-            const area = document.getElementById('studentChatMessages');
-            if (area) {
-                if (url) {
-                    area.style.backgroundImage = `url(${url})`;
-                    area.style.backgroundColor = 'rgba(0,0,0,0.55)';
-                } else {
-                    area.style.backgroundImage = 'none';
-                    area.style.backgroundColor = '';
-                }
+        function updateBgPreview() {
+            const v = document.getElementById('bgBrightness').value;
+            document.getElementById('bgCropImg').style.filter = 'brightness(' + v + '%)';
+        }
+        function closeBgCrop() {
+            document.getElementById('bgCropModal').classList.remove('active');
+            tempBgDataUrl = null;
+        }
+        async function confirmBgCrop() {
+            if (!tempBgDataUrl || !deviceId) return;
+            const br = document.getElementById('bgBrightness').value;
+            await db.collection("chats").doc(deviceId).set({
+                background: tempBgDataUrl,
+                bgBrightness: br
+            }, { merge: true });
+            applyChatBackground(tempBgDataUrl, br);
+            closeBgCrop();
+            triggerIgToast("🖼️ Background dipasang");
+        }
+        function applyChatBackground(url, br) {
+            var box = document.querySelector('#studentChatModal .chat-box');
+            if (!box) box = document.querySelector('.chat-box');
+            var area = document.getElementById('studentChatMessages');
+            if (!box) return;
+            if (url) {
+                box.style.backgroundImage = 'url(' + url + ')';
+                box.style.backgroundSize = 'cover';
+                box.style.backgroundPosition = 'center center';
+                box.style.backgroundRepeat = 'no-repeat';
+            } else {
+                box.style.backgroundImage = 'none';
             }
+            if (area) {
+                area.style.backgroundImage = 'none';
+                area.style.backgroundColor = 'transparent';
+            }
+        }
+        function initBgDrag() {
+            const preview = document.getElementById('bgCropPreview');
+            const img = document.getElementById('bgCropImg');
+            if (!preview || !img) return;
+            bgDrag.currentX = -20; bgDrag.currentY = -20;
+            img.style.left = bgDrag.currentX + '%';
+            img.style.top = bgDrag.currentY + '%';
+            function startDrag(e) {
+                bgDrag.active = true;
+                const pt = e.touches ? e.touches[0] : e;
+                bgDrag.startX = pt.clientX;
+                bgDrag.startY = pt.clientY;
+                bgDrag.imgX = bgDrag.currentX;
+                bgDrag.imgY = bgDrag.currentY;
+            }
+            function moveDrag(e) {
+                if (!bgDrag.active) return;
+                e.preventDefault();
+                const pt = e.touches ? e.touches[0] : e;
+                const dx = (pt.clientX - bgDrag.startX) / preview.offsetWidth * 100;
+                const dy = (pt.clientY - bgDrag.startY) / preview.offsetHeight * 100;
+                bgDrag.currentX = Math.max(-60, Math.min(20, bgDrag.imgX + dx));
+                bgDrag.currentY = Math.max(-60, Math.min(20, bgDrag.imgY + dy));
+                img.style.left = bgDrag.currentX + '%';
+                img.style.top = bgDrag.currentY + '%';
+            }
+            function endDrag() { bgDrag.active = false; }
+            preview.onmousedown = startDrag;
+            preview.ontouchstart = startDrag;
+            window.onmousemove = moveDrag;
+            window.ontouchmove = moveDrag;
+            window.onmouseup = endDrag;
+            window.ontouchend = endDrag;
         }
         // load when chat modal opens
         const _origOpenChat = openStudentChatModal;
