@@ -177,105 +177,93 @@
 
 
         
-        /* ===== STICKER PANEL - ANTI TUMPUK KETAT ===== */
+        /* ===== STICKER PANEL - RAPIH SEPERTI WA ===== */
         .sticker-panel {
-            position: absolute !important;
-            bottom: 100% !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
-            background: #1a1a1a !important;
-            border-top: 1px solid #ff0055 !important;
-            border-radius: 14px 14px 0 0 !important;
+            position: absolute;
+            bottom: 58px;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-top: 1px solid #ff0055;
+            border-radius: 16px 16px 0 0;
             display: none;
-            flex-direction: column !important;
-            z-index: 600 !important;
-            height: 270px !important;
-            max-height: 270px !important;
-            min-height: 270px !important;
-            overflow: hidden !important;
-            box-shadow: 0 -6px 20px rgba(0,0,0,0.7) !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
+            flex-direction: column;
+            z-index: 300;
+            height: 300px;
+            max-height: 50vh;
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.7);
+            overflow: hidden;
         }
-        .sticker-panel.active { display: flex !important; }
+        .sticker-panel.active { display: flex; }
 
         .sticker-categories {
-            display: flex !important;
-            flex-shrink: 0 !important;
-            height: 40px !important;
-            min-height: 40px !important;
-            max-height: 40px !important;
-            background: #222 !important;
-            border-bottom: 1px solid #333 !important;
-            overflow-x: auto !important;
-            overflow-y: hidden !important;
+            display: flex;
+            background: #222;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .sticker-cat-btn {
-            flex: 1 0 auto !important;
-            min-width: 68px !important;
-            height: 40px !important;
-            padding: 0 6px !important;
-            background: none !important;
-            border: none !important;
-            color: #888 !important;
-            font-size: 0.75rem !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
-            border-bottom: 3px solid transparent !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            flex: 1;
+            min-width: 70px;
+            padding: 11px 6px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 0.78rem;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
         }
         .sticker-cat-btn.active {
-            color: #ff0055 !important;
-            border-bottom-color: #ff0055 !important;
-            background: rgba(255,0,85,0.12) !important;
+            color: #ff0055;
+            border-bottom-color: #ff0055;
+            background: rgba(255,0,85,0.1);
         }
 
         .sticker-grid {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
-            grid-auto-rows: 68px !important;
-            gap: 5px !important;
-            padding: 7px !important;
-            overflow-x: hidden !important;
-            overflow-y: scroll !important;
-            height: 230px !important;
-            max-height: 230px !important;
-            min-height: 230px !important;
-            flex: none !important;
+            gap: 6px !important;
+            padding: 10px !important;
+            overflow-y: auto !important;
+            flex: 1 !important;
             align-content: start !important;
-            -webkit-overflow-scrolling: touch !important;
-            box-sizing: border-box !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ff0055 #222;
         }
-        .sticker-grid::-webkit-scrollbar { width: 3px; }
+        .sticker-grid::-webkit-scrollbar { width: 4px; }
         .sticker-grid::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 2px; }
 
         .sticker-item {
             width: 100% !important;
-            height: 68px !important;
-            max-height: 68px !important;
+            aspect-ratio: 1 / 1 !important;
             border-radius: 8px !important;
             border: 1px solid #333 !important;
             background: #252525 !important;
-            display: none;
+            display: none; /* default hidden, shown only if image loads */
             align-items: center !important;
             justify-content: center !important;
             cursor: pointer !important;
             overflow: hidden !important;
+            position: relative !important;
             box-sizing: border-box !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            flex-shrink: 0 !important;
         }
         .sticker-item img {
             width: 100% !important;
             height: 100% !important;
             object-fit: contain !important;
             pointer-events: none !important;
+            -webkit-user-drag: none !important;
             display: block !important;
         }
+        .sticker-item:active { transform: scale(0.92); }
 
         /* ===== CHAT BACKGROUND ===== */
         .chat-messages {
@@ -406,100 +394,215 @@
             h1 { font-size: 1.4rem; }
         }
     
-        /* ===== READ RECEIPTS - MERAH MENYALA ===== */
-        .msg-ticks {
-            display: inline-flex;
-            align-items: center;
-            gap: 1px;
-            margin-left: 6px;
-            font-size: 0.78rem;
-            vertical-align: middle;
-            float: right;
-            line-height: 1;
+        /* BUBBLE THEME BAR */
+        .bubble-theme-bar {
+            display: none; gap: 6px; padding: 6px 8px;
+            background: #1a1a1a; border-top: 1px solid #333;
+            overflow-x: auto; flex-shrink: 0;
         }
+        .bubble-theme-bar.active { display: flex; }
+        .bubble-theme-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 2px solid #444; cursor: pointer; flex-shrink: 0;
+            font-size: 1rem; display: flex; align-items: center;
+            justify-content: center; background: #222;
+        }
+        .bubble-theme-btn.active { border-color: #ff0055; box-shadow: 0 0 8px #ff0055; }
+
+        /* HIASAN STIKER ONLINE DI BUBBLE */
+        .chat-bubble { position: relative !important; overflow: visible !important; }
+        .chat-bubble .bubble-decor {
+            position: absolute; pointer-events: none; z-index: 2;
+            object-fit: contain; width: 28px; height: 28px;
+        }
+        .chat-bubble .bubble-decor.d1 { top: -12px; left: 6px; }
+        .chat-bubble .bubble-decor.d2 { bottom: -10px; right: -8px; width: 26px; height: 26px; }
+
+        .chat-bubble.theme-halloween.user {
+            background: linear-gradient(180deg,#2e7d32,#1b5e20)!important;
+            border: 2px solid #69f0ae!important; box-shadow: 0 0 12px rgba(105,240,174,.35);
+        }
+        .chat-bubble.theme-halloween.admin {
+            background: linear-gradient(180deg,#4a148c,#311b92)!important;
+            border: 2px solid #e040fb!important;
+        }
+        .chat-bubble.theme-love.user {
+            background: linear-gradient(135deg,#c2185b,#ad1457)!important;
+            border: 2px solid #ff80ab!important; box-shadow: 0 0 10px rgba(255,128,171,.4);
+        }
+        .chat-bubble.theme-love.admin {
+            background: linear-gradient(135deg,#6a1b9a,#4a148c)!important;
+            border: 2px solid #ce93d8!important;
+        }
+        .chat-bubble.theme-ocean.user {
+            background: linear-gradient(135deg,#0277bd,#01579b)!important;
+            border: 2px solid #4fc3f7!important;
+        }
+        .chat-bubble.theme-ocean.admin {
+            background: linear-gradient(135deg,#00695c,#004d40)!important;
+            border: 2px solid #80cbc4!important;
+        }
+        .chat-bubble.theme-fire.user {
+            background: linear-gradient(135deg,#e64a19,#bf360c)!important;
+            border: 2px solid #ffab40!important;
+        }
+        .chat-bubble.theme-fire.admin {
+            background: linear-gradient(135deg,#5d4037,#3e2723)!important;
+            border: 2px solid #ffcc80!important;
+        }
+        .chat-bubble.theme-galaxy.user {
+            background: linear-gradient(135deg,#311b92,#1a237e)!important;
+            border: 2px solid #b388ff!important;
+        }
+        .chat-bubble.theme-galaxy.admin {
+            background: linear-gradient(135deg,#1a1a2e,#0d0d0d)!important;
+            border: 2px solid #7c4dff!important;
+        }
+
+        .bubble-meta {
+            display: flex; align-items: center; justify-content: flex-end;
+            gap: 4px; margin-top: 3px; clear: both;
+        }
+        .bubble-time {
+            font-size: 0.65rem; color: rgba(255,255,255,0.55);
+            font-family: Arial,sans-serif; white-space: nowrap;
+        }
+        .msg-ticks { float: none !important; margin-left: 0 !important; font-size: 0.72rem; }
         .tick-single { color: #888; }
         .tick-double { color: #ccc; }
-        .tick-read { color: #ff0055; text-shadow: 0 0 5px #ff0055, 0 0 8px #ff0055; }
+        .tick-read { color: #ff0055; text-shadow: 0 0 5px #ff0055; }
 
     
-        /* ===== BACKGROUND CROP + BRIGHTNESS + DRAG ===== */
-        .bg-crop-modal {
-            position: fixed; top:0; left:0; right:0; bottom:0;
-            background: rgba(0,0,0,0.93); z-index: 99999;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center; padding: 16px;
+        /* HIASAN BUBBLE - CSS frame, tidak nutupin teks */
+        .chat-bubble { position: relative !important; overflow: visible !important; }
+        .chat-bubble.theme-halloween,
+        .chat-bubble.theme-love,
+        .chat-bubble.theme-ocean,
+        .chat-bubble.theme-fire,
+        .chat-bubble.theme-galaxy {
+            padding: 12px 14px !important;
+            margin: 12px 4px !important;
         }
-        .bg-crop-modal.active { display: flex; }
-        .bg-crop-preview {
-            width: 100%; max-width: 340px; height: 280px;
-            background: #111; border: 2px solid #ff0055;
-            border-radius: 12px; overflow: hidden; margin-bottom: 16px;
-            position: relative; cursor: grab; touch-action: none;
-        }
-        .bg-crop-preview:active { cursor: grabbing; }
-        .bg-crop-preview img {
-            width: 140%; height: 140%;
-            object-fit: cover; display: block;
-            position: absolute; top: -20%; left: -20%;
-            max-width: none;
-            user-select: none; -webkit-user-drag: none;
+        .chat-bubble.theme-halloween::before,
+        .chat-bubble.theme-love::before,
+        .chat-bubble.theme-ocean::before,
+        .chat-bubble.theme-fire::before,
+        .chat-bubble.theme-galaxy::before {
+            content: '';
+            position: absolute;
+            top: -8px; left: -8px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
             pointer-events: none;
+            z-index: 2;
+            background-size: contain;
+            background-repeat: no-repeat;
         }
-        .bg-crop-controls { width:100%; max-width:340px; color:#fff; font-family:'Noto Sans JP',sans-serif; }
-        .bg-crop-controls label { display:block; font-size:0.8rem; color:#ff0055; margin-bottom:6px; }
-        .bg-crop-controls input[type=range] { width:100%; margin-bottom:14px; accent-color:#ff0055; }
-        .bg-crop-actions { display:flex; gap:10px; }
-        .bg-crop-actions button { flex:1; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
-        .bg-btn-cancel { background:#333; color:#fff; }
-        .bg-btn-ok { background:#ff0055; color:#fff; }
-
-        /* Background cover yang benar di area chat */
-        .chat-messages {
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
-            background-attachment: local !important;
+        .chat-bubble.theme-halloween::after,
+        .chat-bubble.theme-love::after,
+        .chat-bubble.theme-ocean::after,
+        .chat-bubble.theme-fire::after,
+        .chat-bubble.theme-galaxy::after {
+            content: '';
+            position: absolute;
+            bottom: -8px; right: -8px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        /* Sticker images via CSS background (transparent PNG) */
+        .chat-bubble.theme-halloween::before {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f383.png');
+        }
+        .chat-bubble.theme-halloween::after {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f47b.png');
+        }
+        .chat-bubble.theme-love::before {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2764.png');
+        }
+        .chat-bubble.theme-love::after {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f49e.png');
+        }
+        .chat-bubble.theme-ocean::before {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f30a.png');
+        }
+        .chat-bubble.theme-ocean::after {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f41f.png');
+        }
+        .chat-bubble.theme-fire::before {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f525.png');
+        }
+        .chat-bubble.theme-fire::after {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2b50.png');
+        }
+        .chat-bubble.theme-galaxy::before {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f31f.png');
+        }
+        .chat-bubble.theme-galaxy::after {
+            background-image: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f30c.png');
+        }
+        .chat-bubble.user.theme-halloween::before,
+        .chat-bubble.user.theme-love::before,
+        .chat-bubble.user.theme-ocean::before,
+        .chat-bubble.user.theme-fire::before,
+        .chat-bubble.user.theme-galaxy::before {
+            left: auto; right: -8px;
+        }
+        .chat-bubble.user.theme-halloween::after,
+        .chat-bubble.user.theme-love::after,
+        .chat-bubble.user.theme-ocean::after,
+        .chat-bubble.user.theme-fire::after,
+        .chat-bubble.user.theme-galaxy::after {
+            right: auto; left: -8px;
         }
 
-    
-        
-
-    
-        /* BACKGROUND DIAM - tidak ikut panjang chat */
-        .chat-box {
-            position: relative !important;
-            overflow: hidden !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
+        .chat-bubble.theme-halloween.user {
+            background: linear-gradient(180deg,#2e7d32,#1b5e20)!important;
+            border: 2px solid #69f0ae!important;
         }
-        .chat-messages {
-            background: transparent !important;
-            background-image: none !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            flex: 1 1 auto !important;
-            min-height: 0 !important;
+        .chat-bubble.theme-halloween.admin {
+            background: linear-gradient(180deg,#4a148c,#311b92)!important;
+            border: 2px solid #e040fb!important;
+        }
+        .chat-bubble.theme-love.user {
+            background: linear-gradient(135deg,#c2185b,#ad1457)!important;
+            border: 2px solid #ff80ab!important;
+        }
+        .chat-bubble.theme-love.admin {
+            background: linear-gradient(135deg,#6a1b9a,#4a148c)!important;
+            border: 2px solid #ce93d8!important;
+        }
+        .chat-bubble.theme-ocean.user {
+            background: linear-gradient(135deg,#0277bd,#01579b)!important;
+            border: 2px solid #4fc3f7!important;
+        }
+        .chat-bubble.theme-ocean.admin {
+            background: linear-gradient(135deg,#00695c,#004d40)!important;
+            border: 2px solid #80cbc4!important;
+        }
+        .chat-bubble.theme-fire.user {
+            background: linear-gradient(135deg,#e64a19,#bf360c)!important;
+            border: 2px solid #ffab40!important;
+        }
+        .chat-bubble.theme-fire.admin {
+            background: linear-gradient(135deg,#5d4037,#3e2723)!important;
+            border: 2px solid #ffcc80!important;
+        }
+        .chat-bubble.theme-galaxy.user {
+            background: linear-gradient(135deg,#311b92,#1a237e)!important;
+            border: 2px solid #b388ff!important;
+        }
+        .chat-bubble.theme-galaxy.admin {
+            background: linear-gradient(135deg,#1a1a2e,#0d0d0d)!important;
+            border: 2px solid #7c4dff!important;
         }
 
     </style>
 </head>
 <body>
-
-    <div class="bg-crop-modal" id="bgCropModal">
-        <div class="bg-crop-preview" id="bgCropPreview">
-            <img id="bgCropImg" src="" alt="Preview">
-        </div>
-        <div class="bg-crop-controls">
-            <label>Geser foto untuk atur posisi • Atur kecerahan</label>
-            <input type="range" id="bgBrightness" min="30" max="130" value="100" oninput="updateBgPreview()">
-            <div class="bg-crop-actions">
-                <button class="bg-btn-cancel" onclick="closeBgCrop()">Batal</button>
-                <button class="bg-btn-ok" onclick="confirmBgCrop()">Pasang Background</button>
-            </div>
-        </div>
-    </div>
-
 
     <div id="offlineBar" style="display:none; position:fixed; top:0; left:0; right:0; background:#ff0055; color:#fff; text-align:center; padding:6px; font-size:0.8rem; z-index:99999; font-family:'Noto Sans JP',sans-serif;">
         📡 Mode Offline — Pesan akan dikirim saat online
@@ -599,6 +702,16 @@
                             <button class="reply-cancel-btn" onclick="cancelReplyStudent()"><i class="fa-solid fa-xmark"></i></button>
                         </div>
 
+                        
+                        <div class="bubble-theme-bar" id="bubbleThemeBar">
+                            <button class="bubble-theme-btn active" data-theme="default" onclick="setBubbleTheme('default')">💬</button>
+                            <button class="bubble-theme-btn" data-theme="halloween" onclick="setBubbleTheme('halloween')">🎃</button>
+                            <button class="bubble-theme-btn" data-theme="love" onclick="setBubbleTheme('love')">💕</button>
+                            <button class="bubble-theme-btn" data-theme="ocean" onclick="setBubbleTheme('ocean')">🌊</button>
+                            <button class="bubble-theme-btn" data-theme="fire" onclick="setBubbleTheme('fire')">🔥</button>
+                            <button class="bubble-theme-btn" data-theme="galaxy" onclick="setBubbleTheme('galaxy')">✨</button>
+                        </div>
+
                         <div class="chat-input-controls">
                             
                             <!-- STICKER PANEL WA STYLE -->
@@ -621,7 +734,8 @@
                             </button>
                             <input type="file" id="bgFileInput" accept="image/*" style="display:none;" onchange="changeChatBackground(this)">
 
-                            <button class="btn-sticker-wa" id="btnStickerStudent" onclick="toggleStickerPicker()"><i class="fa-regular fa-face-smile"></i></button>
+                            <button class="btn-sticker-wa" id="btnBubbleTheme" title="Tema Bubble" onclick="toggleBubbleThemeBar()" style="background:#333!important;border:1px solid #ff0055!important;"><i class="fa-solid fa-palette"></i></button>
+<button class="btn-sticker-wa" id="btnStickerStudent" onclick="toggleStickerPicker()"><i class="fa-regular fa-face-smile"></i></button>
 
                             <button class="btn-mic-wa" id="btnMicStudent" onclick="toggleRecordAudio('student')"><i class="fa-solid fa-microphone"></i></button>
                             
@@ -1182,9 +1296,9 @@
                     if (data.reaction) {
                         contentHtml += `<div class="reaction-badge">${data.reaction}</div>`;
                     }
-                    contentHtml += getTicksHtml(data, isUser);
-
+                    contentHtml += '<div class="bubble-meta"><span class="bubble-time">' + formatBubbleTime(data.timestamp) + '</span>' + getTicksHtml(data, isUser) + '</div>';
                     div.innerHTML = contentHtml;
+                    applyThemeToBubble(div);
 
                     // FITUR SWIPE TO REPLY KANAN (PANAH MERAH)
                     setupSwipeToReply(div, isUser ? 'Saya' : 'Admin', data.stickerUrl ? '[Stiker]' : (data.audioUrl ? '[Voice Note]' : (data.text || '')));
@@ -1460,98 +1574,34 @@
 
 
         /* ===== CHAT BACKGROUND (SISWA) ===== */
-        /* ===== CHAT BACKGROUND + CROP + BRIGHTNESS + DRAG (SISWA) ===== */
-        let tempBgDataUrl = null;
-        let bgDrag = { active: false, startX: 0, startY: 0, imgX: 0, imgY: 0, currentX: -20, currentY: -20 };
-
         function changeChatBackground(input) {
             if (!input.files || !input.files[0]) return;
             if (!currentUser) return openAuthModal();
             const file = input.files[0];
-            if (file.size > 3 * 1024 * 1024) return triggerIgToast("⚠️ Max 3MB");
+            if (file.size > 2 * 1024 * 1024) return triggerIgToast("⚠️ Max 2MB");
             const reader = new FileReader();
-            reader.onload = function(e) {
-                tempBgDataUrl = e.target.result;
-                const img = document.getElementById('bgCropImg');
-                img.src = tempBgDataUrl;
-                document.getElementById('bgBrightness').value = 100;
-                updateBgPreview();
-                document.getElementById('bgCropModal').classList.add('active');
-                setTimeout(initBgDrag, 50);
+            reader.onload = async function(e) {
+                const dataUrl = e.target.result;
+                await db.collection("chats").doc(deviceId).set({
+                    background: dataUrl
+                }, { merge: true });
+                applyChatBackground(dataUrl);
+                triggerIgToast("🖼️ Background diganti");
             };
             reader.readAsDataURL(file);
             input.value = '';
         }
-        function updateBgPreview() {
-            const v = document.getElementById('bgBrightness').value;
-            document.getElementById('bgCropImg').style.filter = 'brightness(' + v + '%)';
-        }
-        function closeBgCrop() {
-            document.getElementById('bgCropModal').classList.remove('active');
-            tempBgDataUrl = null;
-        }
-        async function confirmBgCrop() {
-            if (!tempBgDataUrl || !deviceId) return;
-            const br = document.getElementById('bgBrightness').value;
-            await db.collection("chats").doc(deviceId).set({
-                background: tempBgDataUrl,
-                bgBrightness: br
-            }, { merge: true });
-            applyChatBackground(tempBgDataUrl, br);
-            closeBgCrop();
-            triggerIgToast("🖼️ Background dipasang");
-        }
-        function applyChatBackground(url, br) {
-            var box = document.querySelector('#studentChatModal .chat-box');
-            if (!box) box = document.querySelector('.chat-box');
-            var area = document.getElementById('studentChatMessages');
-            if (!box) return;
-            if (url) {
-                box.style.backgroundImage = 'url(' + url + ')';
-                box.style.backgroundSize = 'cover';
-                box.style.backgroundPosition = 'center center';
-                box.style.backgroundRepeat = 'no-repeat';
-            } else {
-                box.style.backgroundImage = 'none';
-            }
+        function applyChatBackground(url) {
+            const area = document.getElementById('studentChatMessages');
             if (area) {
-                area.style.backgroundImage = 'none';
-                area.style.backgroundColor = 'transparent';
+                if (url) {
+                    area.style.backgroundImage = `url(${url})`;
+                    area.style.backgroundColor = 'rgba(0,0,0,0.55)';
+                } else {
+                    area.style.backgroundImage = 'none';
+                    area.style.backgroundColor = '';
+                }
             }
-        }
-        function initBgDrag() {
-            const preview = document.getElementById('bgCropPreview');
-            const img = document.getElementById('bgCropImg');
-            if (!preview || !img) return;
-            bgDrag.currentX = -20; bgDrag.currentY = -20;
-            img.style.left = bgDrag.currentX + '%';
-            img.style.top = bgDrag.currentY + '%';
-            function startDrag(e) {
-                bgDrag.active = true;
-                const pt = e.touches ? e.touches[0] : e;
-                bgDrag.startX = pt.clientX;
-                bgDrag.startY = pt.clientY;
-                bgDrag.imgX = bgDrag.currentX;
-                bgDrag.imgY = bgDrag.currentY;
-            }
-            function moveDrag(e) {
-                if (!bgDrag.active) return;
-                e.preventDefault();
-                const pt = e.touches ? e.touches[0] : e;
-                const dx = (pt.clientX - bgDrag.startX) / preview.offsetWidth * 100;
-                const dy = (pt.clientY - bgDrag.startY) / preview.offsetHeight * 100;
-                bgDrag.currentX = Math.max(-60, Math.min(20, bgDrag.imgX + dx));
-                bgDrag.currentY = Math.max(-60, Math.min(20, bgDrag.imgY + dy));
-                img.style.left = bgDrag.currentX + '%';
-                img.style.top = bgDrag.currentY + '%';
-            }
-            function endDrag() { bgDrag.active = false; }
-            preview.onmousedown = startDrag;
-            preview.ontouchstart = startDrag;
-            window.onmousemove = moveDrag;
-            window.ontouchmove = moveDrag;
-            window.onmouseup = endDrag;
-            window.ontouchend = endDrag;
         }
         // load when chat modal opens
         const _origOpenChat = openStudentChatModal;
@@ -1565,6 +1615,73 @@
                 }
             });
         };
+
+
+        let currentBubbleTheme = localStorage.getItem('bubbleTheme') || 'default';
+        const BUBBLE_DECOR = {
+            halloween: [
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f383.png',
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f47b.png'
+            ],
+            love: [
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f495.png',
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f498.png'
+            ],
+            ocean: [
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f30a.png',
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f41f.png'
+            ],
+            fire: [
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f525.png',
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2b50.png'
+            ],
+            galaxy: [
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f31f.png',
+                'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f30c.png'
+            ]
+        };
+        function toggleBubbleThemeBar() {
+            var bar = document.getElementById('bubbleThemeBar');
+            if (bar) bar.classList.toggle('active');
+        }
+        function setBubbleTheme(theme) {
+            currentBubbleTheme = theme;
+            localStorage.setItem('bubbleTheme', theme);
+            document.querySelectorAll('.bubble-theme-btn').forEach(function(b) {
+                b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+            });
+            document.querySelectorAll('.chat-bubble').forEach(function(el) {
+                applyThemeToBubble(el);
+            });
+        }
+        function applyThemeToBubble(div) {
+            if (!div) return;
+            ['theme-default','theme-halloween','theme-love','theme-ocean','theme-fire','theme-galaxy'].forEach(function(c) {
+                div.classList.remove(c);
+            });
+            var theme = currentBubbleTheme || 'default';
+            div.classList.add('theme-' + theme);
+            div.querySelectorAll('.bubble-decor').forEach(function(e) { e.remove(); });
+        }
+        function formatBubbleTime(ts) {
+            try {
+                var d;
+                if (ts && ts.toDate) d = ts.toDate();
+                else if (ts && ts.seconds) d = new Date(ts.seconds * 1000);
+                else d = new Date();
+                return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+            } catch (e) { return ''; }
+        }
+        function getTicksHtml(msgData, isMyMsg) {
+            if (!isMyMsg) return '';
+            var status = msgData.status || 'sent';
+            if (status === 'read') return '<span class="msg-ticks tick-read"><i class="fa-solid fa-check-double"></i></span>';
+            if (status === 'delivered') return '<span class="msg-ticks tick-double"><i class="fa-solid fa-check-double"></i></span>';
+            return '<span class="msg-ticks tick-single"><i class="fa-solid fa-check"></i></span>';
+        }
+        function getTicksHtmlAdmin(msgData, isMyMsg) {
+            return getTicksHtml(msgData, isMyMsg);
+        }
 
     </script>
 </body>
