@@ -101,12 +101,16 @@
         .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; user-select: none; }
         
         .chat-bubble {
-            position: relative; max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem;
+            position: relative; max-width: 82%; padding: 8px 12px; 
+            border-radius: 10px 14px 6px 12px; /* sedikit bergerigi, tidak terlalu mulus */
+            border: 1.5px solid rgba(255, 0, 85, 0.55);
+            font-size: 0.85rem;
             font-family: Arial, sans-serif !important; word-break: break-word; cursor: pointer; transition: transform 0.2s ease-out; touch-action: pan-y;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
-        .chat-bubble.user { align-self: flex-end; background: #800020; color: #fff; border-bottom-right-radius: 2px; }
-        .chat-bubble.admin { align-self: flex-start; background: #222; color: #fff; border-bottom-left-radius: 2px; }
-        .chat-bubble.deleted { font-style: italic; opacity: 0.7; background: #1a1a1a !important; color: #888 !important; }
+        .chat-bubble.user { align-self: flex-end; background: #800020; color: #fff; border-radius: 14px 10px 12px 6px; border-color: rgba(255, 80, 120, 0.6); }
+        .chat-bubble.admin { align-self: flex-start; background: #222; color: #fff; border-radius: 10px 14px 6px 12px; border-color: rgba(255, 0, 85, 0.45); }
+        .chat-bubble.deleted { font-style: italic; opacity: 0.7; background: #1a1a1a !important; color: #888 !important; border-color: #444 !important; }
 
         /* ANIMASI GELEMBUNG CHAT TYPING 3 TITIK WA */
         .typing-bubble {
@@ -162,9 +166,10 @@
         .emoji-picker-popup span:hover { transform: scale(1.3); }
 
         /* INPUT AREA & STICKER POPUP */
-        .chat-input-area { 
-            display: flex; flex-direction: column; background: #151515; 
-            border-top: 1px solid #222; position: relative; width: 100%; box-sizing: border-box; 
+        .chat-input-area {
+            display: flex; flex-direction: column; background: #151515;
+            border-top: 1px solid #222; position: relative !important; width: 100%; box-sizing: border-box; z-index: 200 !important;
+            overflow: visible !important;
         }
         .chat-input-controls {
             display: flex; align-items: center; gap: 6px; padding: 8px 8px; width: 100%; box-sizing: border-box;
@@ -177,76 +182,90 @@
 
 
         
-        /* ===== STICKER PANEL - RAPIH SEPERTI WA ===== */
+        /* ===== STICKER PANEL - GRID RAPI, TIDAK NUMPUK KE ATAS ===== */
         .sticker-panel {
-            position: absolute;
-            bottom: 58px;
-            left: 0;
-            right: 0;
-            background: #1a1a1a;
-            border-top: 1px solid #ff0055;
-            border-radius: 16px 16px 0 0;
+            position: absolute !important;
+            bottom: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            background: #1a1a1a !important;
+            border-top: 1px solid #ff0055 !important;
+            border-radius: 16px 16px 0 0 !important;
             display: none;
-            flex-direction: column;
-            z-index: 300;
-            height: 300px;
-            max-height: 50vh;
-            box-shadow: 0 -8px 25px rgba(0,0,0,0.7);
-            overflow: hidden;
+            flex-direction: column !important;
+            z-index: 500 !important;
+            height: 260px !important;
+            max-height: 260px !important;
+            min-height: 0 !important;
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.7) !important;
+            overflow: hidden !important;
         }
-        .sticker-panel.active { display: flex; }
+        .sticker-panel.active {
+            display: flex !important;
+        }
 
         .sticker-categories {
-            display: flex;
-            background: #222;
-            border-bottom: 1px solid #333;
-            flex-shrink: 0;
-            overflow-x: auto;
+            display: flex !important;
+            background: #222 !important;
+            border-bottom: 1px solid #333 !important;
+            flex-shrink: 0 !important;
+            flex-grow: 0 !important;
+            overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
+            height: 42px !important;
+            max-height: 42px !important;
         }
         .sticker-cat-btn {
-            flex: 1;
-            min-width: 70px;
-            padding: 11px 6px;
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 0.78rem;
-            font-family: 'Noto Sans JP', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            flex: 1 !important;
+            min-width: 70px !important;
+            padding: 10px 6px !important;
+            background: none !important;
+            border: none !important;
+            color: #888 !important;
+            font-size: 0.78rem !important;
+            font-family: 'Noto Sans JP', sans-serif !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            white-space: nowrap !important;
+            border-bottom: 3px solid transparent !important;
+            transition: all 0.2s !important;
         }
         .sticker-cat-btn.active {
-            color: #ff0055;
-            border-bottom-color: #ff0055;
-            background: rgba(255,0,85,0.1);
+            color: #ff0055 !important;
+            border-bottom-color: #ff0055 !important;
+            background: rgba(255,0,85,0.1) !important;
         }
 
         .sticker-grid {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
+            grid-auto-rows: 70px !important; /* TINGGI BARIS TETAP - kunci biar tidak numpuk */
             gap: 6px !important;
-            padding: 10px !important;
+            padding: 8px !important;
             overflow-y: auto !important;
-            flex: 1 !important;
+            overflow-x: hidden !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            height: auto !important;
+            max-height: calc(260px - 42px) !important;
             align-content: start !important;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: #ff0055 #222;
+            box-sizing: border-box !important;
         }
         .sticker-grid::-webkit-scrollbar { width: 4px; }
         .sticker-grid::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 2px; }
 
         .sticker-item {
             width: 100% !important;
-            aspect-ratio: 1 / 1 !important;
+            height: 70px !important;
+            max-height: 70px !important;
+            min-height: 70px !important;
             border-radius: 8px !important;
             border: 1px solid #333 !important;
             background: #252525 !important;
-            display: none; /* default hidden, shown only if image loads */
+            display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             cursor: pointer !important;
@@ -254,11 +273,15 @@
             position: relative !important;
             box-sizing: border-box !important;
             flex-shrink: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         .sticker-item img {
             width: 100% !important;
             height: 100% !important;
-            object-fit: contain !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: cover !important;
             pointer-events: none !important;
             -webkit-user-drag: none !important;
             display: block !important;
@@ -266,10 +289,16 @@
         .sticker-item:active { transform: scale(0.92); }
 
         /* ===== CHAT BACKGROUND ===== */
-        .chat-messages {
+        .chat-box {
             background-size: cover !important;
             background-position: center center !important;
             background-repeat: no-repeat !important;
+            background-color: #080808;
+        }
+        .chat-messages {
+            background-image: none !important;
+            background-color: transparent !important;
+            background-size: auto !important;
         }
         .btn-bg-chat {
             background: #333 !important;
@@ -600,6 +629,111 @@
             border: 2px solid #7c4dff!important;
         }
 
+    
+        /* BACKGROUND DIAM - tidak ikut panjang chat */
+        .chat-box {
+            position: relative !important;
+            overflow: hidden !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+        }
+        .chat-messages {
+            background: transparent !important;
+            background-image: none !important;
+            overflow-y: auto !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+        }
+
+    
+        /* BORDER BUBBLE BERGERIGI ala WA Premium */
+        .chat-bubble {
+            border-radius: 10px 10px 10px 4px !important;
+            border: 2px solid rgba(255,255,255,0.12) !important;
+        }
+        .chat-bubble.user {
+            border-radius: 10px 10px 4px 10px !important;
+        }
+        .chat-bubble.theme-halloween.user,
+        .chat-bubble.theme-halloween.admin {
+            border: 2.5px solid #69f0ae !important;
+            border-radius: 12px 8px 14px 6px !important;
+            box-shadow: 0 0 0 1px rgba(105,240,174,0.3), 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .chat-bubble.theme-love.user,
+        .chat-bubble.theme-love.admin {
+            border: 2.5px solid #ff80ab !important;
+            border-radius: 14px 6px 12px 8px !important;
+        }
+        .chat-bubble.theme-ocean.user,
+        .chat-bubble.theme-ocean.admin {
+            border: 2.5px solid #4fc3f7 !important;
+            border-radius: 8px 14px 6px 12px !important;
+        }
+        .chat-bubble.theme-fire.user,
+        .chat-bubble.theme-fire.admin {
+            border: 2.5px solid #ffab40 !important;
+            border-radius: 6px 12px 14px 8px !important;
+        }
+        .chat-bubble.theme-galaxy.user,
+        .chat-bubble.theme-galaxy.admin {
+            border: 2.5px solid #b388ff !important;
+            border-radius: 12px 6px 10px 14px !important;
+        }
+
+    
+        /* BACKGROUND DIAM FINAL */
+        .chat-box {
+            position: relative !important;
+            overflow: hidden !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-color: #080808 !important;
+        }
+        #studentChatMessages,
+        #adminChatMessages,
+        .chat-messages {
+            background-image: none !important;
+            background-color: transparent !important;
+            background: transparent !important;
+            overflow-y: auto !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+        }
+
+    
+        /* BORDER BERGERIGI FINAL */
+        .chat-bubble {
+            border: 2px solid rgba(255,255,255,0.18) !important;
+            border-radius: 11px 9px 11px 5px !important;
+        }
+        .chat-bubble.user {
+            border-radius: 11px 9px 5px 11px !important;
+        }
+        .chat-bubble.theme-halloween {
+            border: 2.5px solid #76ff03 !important;
+            border-radius: 13px 7px 15px 5px !important;
+            box-shadow: inset 0 0 0 1px rgba(118,255,3,0.25), 0 0 10px rgba(118,255,3,0.2);
+        }
+        .chat-bubble.theme-love {
+            border: 2.5px solid #ff80ab !important;
+            border-radius: 15px 6px 12px 8px !important;
+        }
+        .chat-bubble.theme-ocean {
+            border: 2.5px solid #40c4ff !important;
+            border-radius: 8px 14px 6px 12px !important;
+        }
+        .chat-bubble.theme-fire {
+            border: 2.5px solid #ff9100 !important;
+            border-radius: 6px 12px 14px 7px !important;
+        }
+        .chat-bubble.theme-galaxy {
+            border: 2.5px solid #b388ff !important;
+            border-radius: 12px 6px 10px 14px !important;
+        }
+
     </style>
 </head>
 <body>
@@ -712,23 +846,20 @@
                             <button class="bubble-theme-btn" data-theme="galaxy" onclick="setBubbleTheme('galaxy')">✨</button>
                         </div>
 
-                        <div class="chat-input-controls">
-                            
-                            <!-- STICKER PANEL WA STYLE -->
-                            <div class="sticker-panel" id="stickerPickerStudent">
-                                <div class="sticker-categories" id="stickerCatsStudent">
-                                    <button class="sticker-cat-btn active" data-cat="bocil" onclick="switchStickerCat('bocil', 'student')">Bocil</button>
-                                    <button class="sticker-cat-btn" data-cat="anime" onclick="switchStickerCat('anime', 'student')">Anime</button>
-                                    <button class="sticker-cat-btn" data-cat="ytta" onclick="switchStickerCat('ytta', 'student')">YTTA</button>
-                                    <button class="sticker-cat-btn" data-cat="kartun" onclick="switchStickerCat('kartun', 'student')">Kartun</button>
-                                </div>
-                                <div class="sticker-grid" id="stickerGridStudent">
-                                    <!-- diisi oleh JS -->
-                                </div>
+                        <!-- STICKER PANEL (sibling of controls, position absolute di atas input) -->
+                        <div class="sticker-panel" id="stickerPickerStudent">
+                            <div class="sticker-categories" id="stickerCatsStudent">
+                                <button class="sticker-cat-btn active" data-cat="bocil" onclick="switchStickerCat('bocil', 'student')">Bocil</button>
+                                <button class="sticker-cat-btn" data-cat="anime" onclick="switchStickerCat('anime', 'student')">Anime</button>
+                                <button class="sticker-cat-btn" data-cat="ytta" onclick="switchStickerCat('ytta', 'student')">YTTA</button>
+                                <button class="sticker-cat-btn" data-cat="kartun" onclick="switchStickerCat('kartun', 'student')">Kartun</button>
                             </div>
+                            <div class="sticker-grid" id="stickerGridStudent">
+                                <!-- diisi oleh JS -->
+                            </div>
+                        </div>
 
-                            <!-- TOMBOL STIKER WA (KIRI) -->
-                            
+                        <div class="chat-input-controls">
                             <button class="btn-bg-chat" id="btnBgChat" title="Ganti Background Chat" onclick="document.getElementById('bgFileInput').click()">
                                 <i class="fa-solid fa-image"></i>
                             </button>
@@ -981,11 +1112,9 @@
                 const img = document.createElement('img');
                 img.src = filename;
                 img.alt = filename;
-                img.onload = function() {
-                    item.style.display = 'flex';
-                };
+                img.loading = 'lazy';
                 img.onerror = function() {
-                    item.remove();
+                    if (item.parentNode) item.parentNode.removeChild(item);
                 };
                 item.appendChild(img);
                 grid.appendChild(item);
@@ -1045,19 +1174,7 @@
         // set online saat load
         setTimeout(() => setPresence(true), 1000);
 
-        /* ========== READ RECEIPTS HELPER ========== */
-        function getTicksHtml(msgData, isMyMsg) {
-            if (!isMyMsg) return '';
-            // status: sent / delivered / read
-            const status = msgData.status || 'sent';
-            if (status === 'read') {
-                return `<span class="msg-ticks tick-read"><i class="fa-solid fa-check-double"></i></span>`;
-            } else if (status === 'delivered') {
-                return `<span class="msg-ticks tick-double"><i class="fa-solid fa-check-double"></i></span>`;
-            } else {
-                return `<span class="msg-ticks tick-single"><i class="fa-solid fa-check"></i></span>`;
-            }
-        }
+        /* ========== READ RECEIPTS HELPER (defined later near end) ========== */
 
         /* ========== PIN MESSAGE ========== */
         let activeCtxMsgId = null;
@@ -1127,25 +1244,10 @@
         });
 
         /* ========== MARK AS READ when chat open ========== */
-        function markMessagesAsRead() {
-            if (!deviceId) return;
-            db.collection("chats").doc(deviceId).collection("messages")
-              .where("sender", "==", "ADMIN")
-              .where("status", "in", ["sent", "delivered"])
-              .get().then(snap => {
-                const batch = db.batch();
-                snap.forEach(doc => {
-                    batch.update(doc.ref, { status: 'read' });
-                });
-                if (!snap.empty) batch.commit();
-              }).catch(()=>{});
-        }
-
-        // call mark as read when modal opens
-        const origOpenStudentChat = openStudentChatModal;
+        const origOpenStudentChat = typeof openStudentChatModal === 'function' ? openStudentChatModal : function(){};
         openStudentChatModal = function() {
             origOpenStudentChat();
-            setTimeout(markMessagesAsRead, 800);
+            setTimeout(function(){ markMessagesAsRead(); updateOutgoingToDelivered(); }, 500);
         };
 
         async function sendSticker(stickerPath) {
@@ -1314,6 +1416,8 @@
                 chatMessages.appendChild(div);
             });
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            markMessagesAsRead();
+            updateOutgoingToDelivered();
 
             if (!snapshot.empty) {
                 const lastMsg = snapshot.docs[snapshot.docs.length - 1].data();
@@ -1591,18 +1695,6 @@
             reader.readAsDataURL(file);
             input.value = '';
         }
-        function applyChatBackground(url) {
-            const area = document.getElementById('studentChatMessages');
-            if (area) {
-                if (url) {
-                    area.style.backgroundImage = `url(${url})`;
-                    area.style.backgroundColor = 'rgba(0,0,0,0.55)';
-                } else {
-                    area.style.backgroundImage = 'none';
-                    area.style.backgroundColor = '';
-                }
-            }
-        }
         // load when chat modal opens
         const _origOpenChat = openStudentChatModal;
         openStudentChatModal = function() {
@@ -1672,15 +1764,82 @@
                 return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
             } catch (e) { return ''; }
         }
+        
+        
+
+
+        function applyChatBackground(url, br) {
+            var box = document.querySelector('#studentChatModal .chat-box') || document.querySelector('.chat-box');
+            var area = document.getElementById('studentChatMessages');
+            if (!box) return;
+            if (url) {
+                box.style.backgroundImage = 'url(' + url + ')';
+                box.style.backgroundSize = 'cover';
+                box.style.backgroundPosition = 'center center';
+                box.style.backgroundRepeat = 'no-repeat';
+                box.style.backgroundAttachment = 'scroll';
+                box.style.backgroundOrigin = 'border-box';
+            } else {
+                box.style.backgroundImage = 'none';
+                box.style.backgroundColor = '#080808';
+            }
+            if (area) {
+                area.style.backgroundImage = 'none';
+                area.style.backgroundColor = 'transparent';
+                area.style.backgroundSize = 'auto';
+            }
+        }
+
+
         function getTicksHtml(msgData, isMyMsg) {
             if (!isMyMsg) return '';
             var status = msgData.status || 'sent';
-            if (status === 'read') return '<span class="msg-ticks tick-read"><i class="fa-solid fa-check-double"></i></span>';
-            if (status === 'delivered') return '<span class="msg-ticks tick-double"><i class="fa-solid fa-check-double"></i></span>';
+            if (status === 'read') {
+                return '<span class="msg-ticks tick-read"><i class="fa-solid fa-check-double"></i></span>';
+            }
+            if (status === 'delivered') {
+                return '<span class="msg-ticks tick-double"><i class="fa-solid fa-check-double"></i></span>';
+            }
             return '<span class="msg-ticks tick-single"><i class="fa-solid fa-check"></i></span>';
         }
         function getTicksHtmlAdmin(msgData, isMyMsg) {
             return getTicksHtml(msgData, isMyMsg);
+        }
+        async function markMessagesAsRead() {
+            if (!deviceId) return;
+            try {
+                var snap = await db.collection("chats").doc(deviceId).collection("messages").get();
+                var batch = db.batch();
+                var n = 0;
+                snap.forEach(function(doc) {
+                    var d = doc.data();
+                    if (d.sender === 'ADMIN' && d.status !== 'read' && !d.isDeleted && !d.isSystem) {
+                        batch.update(doc.ref, { status: 'read' });
+                        n++;
+                    }
+                });
+                if (n > 0) await batch.commit();
+            } catch (e) {}
+        }
+        // set delivered when peer online
+        async function updateOutgoingToDelivered() {
+            if (!deviceId) return;
+            try {
+                var pres = await db.collection("presence").doc("ADMIN").get();
+                var adminOnline = pres.exists && pres.data().online;
+                if (!adminOnline) return;
+                var snap = await db.collection("chats").doc(deviceId).collection("messages").get();
+                var batch = db.batch();
+                var n = 0;
+                snap.forEach(function(doc) {
+                    var d = doc.data();
+                    if (d.sender !== 'ADMIN' && d.status === 'sent' && !d.isDeleted) {
+                        batch.update(doc.ref, { status: 'delivered' });
+                        n++;
+                    }
+                });
+                if (n > 0) await batch.commit();
+            } catch (e) {}
         }
 
     </script>
